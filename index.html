@@ -11,19 +11,24 @@
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@300;500;600&display=swap"
         rel="stylesheet">
     <style>
-        /* dark-industrial theme tokens */
+        /* theme tokens */
         :root {
             --bg-color: #0c0d0f;
-            --panel-bg: #111215;
-
             --highlight: #ff4a1c;
-
             --text-color: #818a99;
             --text-muted: #5a606b;
+            --glitch-color: #00ffcc;
 
-            --border-color: rgba(255, 255, 255, 0.05);
-            --border-light: rgba(255, 255, 255, 0.1);
-            --shadow-deep: 0 24px 48px rgba(0, 0, 0, 0.6);
+            /* glass system — overridden by JS theme engine */
+            --glass-bg: rgba(255, 90, 30, 0.04);
+            --glass-bg-hover: rgba(255, 90, 30, 0.08);
+            --glass-bg-strong: rgba(255, 90, 30, 0.06);
+            --glass-border: rgba(255, 90, 30, 0.12);
+            --glass-inset: rgba(255, 255, 255, 0.08);
+            --glass-shadow: rgba(0, 0, 0, 0.55);
+            --highlight-ghost: rgba(255, 74, 28, 0.3);
+            --highlight-glow: rgba(255, 74, 28, 0.4);
+            --load-bg: rgba(12, 13, 15, 0.9);
 
             --font-main: 'Inter', sans-serif;
             --font-head: 'Space Grotesk', sans-serif;
@@ -91,27 +96,28 @@
             pointer-events: auto;
         }
 
-        /* min panels */
+        /* glass panels */
         .panel {
-            background-color: var(--panel-bg);
-            background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.2) 100%);
-            box-shadow: var(--shadow-deep);
-            border-radius: 4px;
-            padding: 48px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 0 var(--glass-inset);
+            border-radius: 20px;
+            padding: 40px;
             box-sizing: border-box;
-            border: 1px solid var(--border-color);
-            border-top: 1px solid var(--border-light);
-            transition: border-color 0.4s ease, transform 0.4s ease;
+            border: 1px solid var(--glass-border);
+            transition: border-color 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
             width: 420px;
         }
 
         .panel:hover {
             border-color: var(--highlight-ghost);
+            box-shadow: 0 8px 40px var(--glass-shadow), inset 0 1px 0 var(--glass-bg-hover);
             transform: translateZ(10px);
         }
 
         .panel:hover h2 {
-            text-shadow: 2px 0 0 rgba(255, 74, 28, 0.8), -2px 0 0 rgba(0, 255, 255, 0.6);
+            text-shadow: 2px 0 0 var(--highlight), -2px 0 0 var(--glitch-color);
         }
 
         h2 {
@@ -173,38 +179,41 @@
         .skill-bar {
             width: 100%;
             height: 2px;
-            background: #1c1d21;
+            background: rgba(255, 255, 255, 0.07);
+            border-radius: 99px;
             margin-bottom: 24px;
         }
 
         .skill-fill {
             height: 100%;
+            border-radius: 99px;
             background: var(--highlight);
-            box-shadow: 0 0 8px var(--highlight-glow);
+            box-shadow: 0 0 10px var(--highlight-glow);
         }
 
-        /* professional form inputs */
+        /* glass form inputs */
         input,
         textarea {
-            background: #0a0b0d;
-            border: 1px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: #ffffff;
             padding: 14px 16px;
-            border-radius: 2px;
+            border-radius: 12px;
             width: 100%;
             box-sizing: border-box;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             font-family: var(--font-mono);
             font-size: 0.85rem;
             resize: none;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
 
         input:focus,
         textarea:focus {
             outline: none;
-            border-color: var(--highlight);
-            background: #0d0f12;
+            border-color: var(--highlight-ghost);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 3px var(--highlight-ghost);
         }
 
         input::placeholder,
@@ -213,23 +222,27 @@
         }
 
         button {
-            background: #ffffff;
-            color: #000000;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
             padding: 14px 24px;
-            border: none;
-            border-radius: 2px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
             cursor: pointer;
             font-weight: 500;
             font-family: var(--font-head);
-            letter-spacing: 0.02em;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
+            letter-spacing: 0.04em;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
             width: 100%;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
         button:hover {
             background: var(--highlight);
+            border-color: var(--highlight);
             color: #ffffff;
+            box-shadow: 0 4px 20px var(--highlight-ghost);
         }
 
         /* project sub-objects */
@@ -241,25 +254,27 @@
 
         .proj-obj {
             position: absolute;
-            width: 80px;
-            height: 80px;
-            background: var(--panel-bg);
-            border-radius: 2px;
+            width: 72px;
+            height: 72px;
+            background: var(--glass-bg-strong);
+            border-radius: 18px;
             cursor: pointer;
-            box-shadow: var(--shadow-deep);
+            box-shadow: 0 4px 24px var(--glass-shadow), inset 0 1px 0 var(--glass-inset);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             transform-style: preserve-3d;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
             animation: float 6s infinite ease-in-out;
             overflow: hidden;
         }
 
         .proj-obj:hover {
-            border-color: var(--highlight-glow);
+            border-color: var(--highlight-ghost);
+            background: var(--glass-bg-hover);
+            box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 0 var(--glass-inset);
         }
 
         .proj-obj .icon {
@@ -286,11 +301,14 @@
 
         .proj-obj.active {
             width: 300px;
-            height: 160px;
+            height: 170px;
             z-index: 10;
             animation: none;
             transform: translateZ(60px) !important;
             border-left: 2px solid var(--highlight);
+            border-radius: 20px;
+            background: var(--glass-bg-hover);
+            box-shadow: 0 16px 48px var(--glass-shadow), inset 0 1px 0 var(--glass-inset);
         }
 
         .proj-obj.active .icon {
@@ -349,52 +367,49 @@
             }
         }
 
-        /* min ui nav */
+        /* glass nav bar */
         .ui-nav {
             position: fixed;
-            top: 40px;
+            top: 28px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 24px;
+            gap: 4px;
             z-index: 9999;
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(20px) saturate(160%);
+            -webkit-backdrop-filter: blur(20px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 999px;
+            padding: 6px 8px;
+            box-shadow: 0 8px 32px var(--glass-shadow), inset 0 1px 0 var(--glass-inset);
         }
 
         .ui-btn {
             background: transparent;
             border: none;
-            color: var(--text-muted);
-            padding: 8px 0;
-            border-radius: 0;
-            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.55);
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 0.72rem;
             font-weight: 500;
             font-family: var(--font-mono);
             cursor: pointer;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            transition: color 0.3s ease;
+            transition: background 0.25s ease, color 0.25s ease;
             width: auto;
             position: relative;
         }
 
-        .ui-btn::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0%;
-            height: 1px;
-            background: var(--highlight);
-            transition: width 0.3s ease;
-        }
-
         .ui-btn:hover {
+            background: var(--glass-bg-hover);
             color: #ffffff;
-            background: transparent;
         }
 
-        .ui-btn:hover::after {
-            width: 100%;
+        .ui-btn:active {
+            background: var(--highlight-ghost);
+            color: #ffffff;
         }
 
         .overlay {
@@ -410,28 +425,38 @@
             z-index: 100;
         }
 
+        /* glass console */
         .console {
             position: fixed;
-            bottom: 30px;
-            right: 40px;
+            bottom: 28px;
+            right: 28px;
             font-family: var(--font-mono);
             font-size: 0.7rem;
             color: var(--highlight);
             text-align: right;
-            line-height: 1.6;
+            line-height: 1.8;
             pointer-events: none;
-            z-index: 1000;
-            opacity: 0.7;
+            z-index: 9999;
+            background: var(--glass-bg-strong);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 10px 16px;
             text-transform: uppercase;
+            opacity: 0.9;
         }
 
+        /* glass load screen */
         #load-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: var(--bg-color);
+            background: var(--load-bg);
+            backdrop-filter: blur(32px) saturate(120%);
+            -webkit-backdrop-filter: blur(32px) saturate(120%);
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -573,44 +598,44 @@
         // theme presets
         const THEMES = {
             forge: {
-                background: "#0c0d0f",
-                panel: "#111215",
-                accent: "#ff4a1c",
-                text: "#818a99",
-                glitch: "#00ffcc",
-                grid: "rgba(255, 74, 28, 0.03)"
+                background: "#0c0d0f", accent: "#ff4a1c", text: "#818a99",
+                glitch: "#00ffcc", grid: "rgba(255,74,28,0.03)",
+                glassBg: "rgba(255,74,28,0.04)", glassBgHover: "rgba(255,74,28,0.08)",
+                glassBgStrong: "rgba(255,74,28,0.06)", glassBorder: "rgba(255,74,28,0.15)",
+                glassInset: "rgba(255,255,255,0.08)", glassShadow: "rgba(0,0,0,0.55)",
+                loadBg: "rgba(12,13,15,0.92)"
             },
             midnight: {
-                background: "#080a12",
-                panel: "#0e1018",
-                accent: "#6c5ce7",
-                text: "#8a8ea8",
-                glitch: "#ffd93d",
-                grid: "rgba(108, 92, 231, 0.03)"
+                background: "#080a12", accent: "#6c5ce7", text: "#8a8ea8",
+                glitch: "#ffd93d", grid: "rgba(108,92,231,0.03)",
+                glassBg: "rgba(108,92,231,0.06)", glassBgHover: "rgba(108,92,231,0.12)",
+                glassBgStrong: "rgba(108,92,231,0.08)", glassBorder: "rgba(108,92,231,0.2)",
+                glassInset: "rgba(255,255,255,0.08)", glassShadow: "rgba(0,0,0,0.6)",
+                loadBg: "rgba(8,10,18,0.92)"
             },
             arctic: {
-                background: "#0a0e14",
-                panel: "#0f1319",
-                accent: "#00b4d8",
-                text: "#94a3b8",
-                glitch: "#ff6b6b",
-                grid: "rgba(0, 180, 216, 0.03)"
+                background: "#0a0e14", accent: "#00b4d8", text: "#94a3b8",
+                glitch: "#ff6b6b", grid: "rgba(0,180,216,0.03)",
+                glassBg: "rgba(0,180,216,0.05)", glassBgHover: "rgba(0,180,216,0.1)",
+                glassBgStrong: "rgba(0,180,216,0.07)", glassBorder: "rgba(0,180,216,0.18)",
+                glassInset: "rgba(255,255,255,0.1)", glassShadow: "rgba(0,0,0,0.5)",
+                loadBg: "rgba(10,14,20,0.92)"
             },
             terminal: {
-                background: "#0a0a0a",
-                panel: "#0f0f0f",
-                accent: "#39ff14",
-                text: "#7a8a7a",
-                glitch: "#ff00ff",
-                grid: "rgba(57, 255, 20, 0.03)"
+                background: "#0a0a0a", accent: "#39ff14", text: "#7a8a7a",
+                glitch: "#ff00ff", grid: "rgba(57,255,20,0.03)",
+                glassBg: "rgba(57,255,20,0.04)", glassBgHover: "rgba(57,255,20,0.08)",
+                glassBgStrong: "rgba(57,255,20,0.06)", glassBorder: "rgba(57,255,20,0.18)",
+                glassInset: "rgba(255,255,255,0.06)", glassShadow: "rgba(0,0,0,0.65)",
+                loadBg: "rgba(10,10,10,0.94)"
             },
             ember: {
-                background: "#0f0b0a",
-                panel: "#151110",
-                accent: "#f97316",
-                text: "#9a8578",
-                glitch: "#38bdf8",
-                grid: "rgba(249, 115, 22, 0.03)"
+                background: "#0f0b0a", accent: "#f97316", text: "#9a8578",
+                glitch: "#38bdf8", grid: "rgba(249,115,22,0.03)",
+                glassBg: "rgba(249,115,22,0.05)", glassBgHover: "rgba(249,115,22,0.1)",
+                glassBgStrong: "rgba(249,115,22,0.07)", glassBorder: "rgba(249,115,22,0.18)",
+                glassInset: "rgba(255,255,255,0.08)", glassShadow: "rgba(0,0,0,0.55)",
+                loadBg: "rgba(15,11,10,0.92)"
             }
         };
 
@@ -619,7 +644,13 @@
             name: "Demo",
             title: "3D Portfolio",
             theme: "midnight", // forge | midnight | arctic | terminal | ember
-            bg: "nebula",   // none | particles | scanlines | nebula
+            bg: "particles",   // none | particles | scanlines | nebula
+            camera: {
+                scrollSpeed: 2, // dolly speed (higher = faster zoom)
+                dragSpeed: 0.5,  // rotation drag sensitivity
+                easing: 0.05,     // camera interpolation (0.01 = slow, 0.15 = snappy)
+                focusDist: 800    // how close the camera gets when focusing a node
+            },
             bootSequence: [
                 "> INITIALIZING...",
                 "> LOADING COMPONENTS...",
@@ -674,11 +705,19 @@
         const theme = THEMES[CONFIG.theme] || THEMES.forge;
         const root = document.documentElement;
         root.style.setProperty('--bg-color', theme.background);
-        root.style.setProperty('--panel-bg', theme.panel);
         root.style.setProperty('--highlight', theme.accent);
         root.style.setProperty('--text-color', theme.text);
+        root.style.setProperty('--glitch-color', theme.glitch);
         root.style.setProperty('--highlight-ghost', theme.accent + '4D');
         root.style.setProperty('--highlight-glow', theme.accent + '66');
+        // glass variables by theme
+        root.style.setProperty('--glass-bg', theme.glassBg);
+        root.style.setProperty('--glass-bg-hover', theme.glassBgHover);
+        root.style.setProperty('--glass-bg-strong', theme.glassBgStrong);
+        root.style.setProperty('--glass-border', theme.glassBorder);
+        root.style.setProperty('--glass-inset', theme.glassInset);
+        root.style.setProperty('--glass-shadow', theme.glassShadow);
+        root.style.setProperty('--load-bg', theme.loadBg);
 
         // apply colors to hover rules
         const glitchStyle = document.createElement('style');
@@ -898,7 +937,7 @@
             node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg)`;
 
             const focusFn = () => {
-                const dist = 600;
+                const dist = CONFIG.camera.focusDist;
                 const rX = rx * Math.PI / 180;
                 const rY = ry * Math.PI / 180;
                 tar.x = x + Math.sin(rY) * Math.cos(rX) * dist;
@@ -938,8 +977,8 @@
         window.addEventListener('mousedown', e => { dragging = true; sX = e.clientX; sY = e.clientY; });
         window.addEventListener('mousemove', e => {
             if (!dragging) return;
-            tar.ry -= (e.clientX - sX) * 0.15;
-            tar.rx += (e.clientY - sY) * 0.15;
+            tar.ry -= (e.clientX - sX) * CONFIG.camera.dragSpeed;
+            tar.rx += (e.clientY - sY) * CONFIG.camera.dragSpeed;
             tar.rx = Math.max(-80, Math.min(80, tar.rx));
             sX = e.clientX; sY = e.clientY;
         });
@@ -951,7 +990,7 @@
             e.preventDefault();
             if (document.querySelector('.proj-obj.active')) return;
 
-            const amt = e.deltaY * 0.5;
+            const amt = e.deltaY * CONFIG.camera.scrollSpeed;
             const ryR = tar.ry * Math.PI / 180;
             const rxR = tar.rx * Math.PI / 180;
             tar.x += Math.sin(ryR) * Math.cos(rxR) * amt;
@@ -963,7 +1002,7 @@
         const consoleEl = document.getElementById('console');
 
         function loop() {
-            const ease = 0.05;
+            const ease = CONFIG.camera.easing;
             obj.x += (tar.x - obj.x) * ease; obj.y += (tar.y - obj.y) * ease; obj.z += (tar.z - obj.z) * ease;
             obj.rx += (tar.rx - obj.rx) * ease; obj.ry += (tar.ry - obj.ry) * ease;
 
