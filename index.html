@@ -93,7 +93,8 @@
 
         /* min panels */
         .panel {
-            background: var(--panel-bg);
+            background-color: var(--panel-bg);
+            background-image: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.2) 100%);
             box-shadow: var(--shadow-deep);
             border-radius: 4px;
             padding: 48px;
@@ -109,6 +110,10 @@
             transform: translateZ(10px);
         }
 
+        .panel:hover h2 {
+            text-shadow: 2px 0 0 rgba(255, 74, 28, 0.8), -2px 0 0 rgba(0, 255, 255, 0.6);
+        }
+
         h2 {
             font-family: var(--font-head);
             margin: 0 0 20px 0;
@@ -116,6 +121,7 @@
             font-size: 1.8rem;
             font-weight: 500;
             letter-spacing: -0.02em;
+            transition: text-shadow 0.3s ease;
         }
 
         p {
@@ -136,6 +142,17 @@
             background-size: 100px 100px;
             transform: translateZ(-1000px);
             pointer-events: none;
+            animation: gridPulse 8s infinite alternate ease-in-out;
+        }
+
+        @keyframes gridPulse {
+            0% {
+                opacity: 0.4;
+            }
+
+            100% {
+                opacity: 1;
+            }
         }
 
         /* skills visualizer */
@@ -285,12 +302,17 @@
             pointer-events: auto;
         }
 
+        .proj-obj:hover h3 {
+            text-shadow: 2px 0 0 rgba(255, 74, 28, 0.8), -2px 0 0 rgba(0, 255, 255, 0.6);
+        }
+
         .proj-obj h3 {
             font-family: var(--font-head);
             margin: 0 0 8px 0;
             color: #ffffff;
             font-size: 1.2rem;
             font-weight: 500;
+            transition: text-shadow 0.3s ease;
         }
 
         .proj-obj p {
@@ -491,16 +513,55 @@
     </div>
 
     <script>
-        // TEMPLATE CONFIGURATION
-        const CONFIG = {
-            name: "bobby joe",
-            title: "3D Portfolio",
-            colors: {
+        // theme presets
+        const THEMES = {
+            forge: {
                 background: "#0c0d0f",
                 panel: "#111215",
                 accent: "#ff4a1c",
-                text: "#818a99"
+                text: "#818a99",
+                glitch: "#00ffcc",
+                grid: "rgba(255, 74, 28, 0.03)"
             },
+            midnight: {
+                background: "#080a12",
+                panel: "#0e1018",
+                accent: "#6c5ce7",
+                text: "#8a8ea8",
+                glitch: "#ffd93d",
+                grid: "rgba(108, 92, 231, 0.03)"
+            },
+            arctic: {
+                background: "#0a0e14",
+                panel: "#0f1319",
+                accent: "#00b4d8",
+                text: "#94a3b8",
+                glitch: "#ff6b6b",
+                grid: "rgba(0, 180, 216, 0.03)"
+            },
+            terminal: {
+                background: "#0a0a0a",
+                panel: "#0f0f0f",
+                accent: "#39ff14",
+                text: "#7a8a7a",
+                glitch: "#ff00ff",
+                grid: "rgba(57, 255, 20, 0.03)"
+            },
+            ember: {
+                background: "#0f0b0a",
+                panel: "#151110",
+                accent: "#f97316",
+                text: "#9a8578",
+                glitch: "#38bdf8",
+                grid: "rgba(249, 115, 22, 0.03)"
+            }
+        };
+
+        // template configuration
+        const CONFIG = {
+            name: "Demo",
+            title: "3D Portfolio",
+            theme: "forge", // forge | midnight | arctic | terminal | ember
             bootSequence: [
                 "> INITIALIZING...",
                 "> LOADING COMPONENTS...",
@@ -551,12 +612,30 @@
         // dom render function - do not edit
         document.title = CONFIG.name + " | " + CONFIG.title;
 
-        // apply colors
+        // apply theme
+        const theme = THEMES[CONFIG.theme] || THEMES.forge;
         const root = document.documentElement;
-        root.style.setProperty('--bg-color', CONFIG.colors.background);
-        root.style.setProperty('--panel-bg', CONFIG.colors.panel);
-        root.style.setProperty('--highlight', CONFIG.colors.accent);
-        root.style.setProperty('--text-color', CONFIG.colors.text);
+        root.style.setProperty('--bg-color', theme.background);
+        root.style.setProperty('--panel-bg', theme.panel);
+        root.style.setProperty('--highlight', theme.accent);
+        root.style.setProperty('--text-color', theme.text);
+
+        // apply colors to hover rules
+        const glitchStyle = document.createElement('style');
+        glitchStyle.textContent = `
+            .panel:hover h2, .proj-obj:hover h3 {
+                text-shadow: 2px 0 0 ${theme.accent}, -2px 0 0 ${theme.glitch} !important;
+            }
+            .grid {
+                background-image: linear-gradient(${theme.grid} 1px, transparent 1px), linear-gradient(90deg, ${theme.grid} 1px, transparent 1px) !important;
+            }
+            .exp-shape { border-color: ${theme.accent} !important; opacity: 0.3; }
+            .skill-fill { background: ${theme.accent} !important; box-shadow: 0 0 8px ${theme.accent}66 !important; }
+            .ui-btn::after { background: ${theme.accent} !important; }
+            .console { color: ${theme.accent} !important; }
+            #load-screen { color: ${theme.accent} !important; }
+        `;
+        document.head.appendChild(glitchStyle);
 
         // render boot screen
         document.getElementById('load-screen').innerHTML = CONFIG.bootSequence
