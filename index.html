@@ -106,7 +106,7 @@
         }
 
         .panel:hover {
-            border-color: rgba(255, 74, 28, 0.3);
+            border-color: var(--highlight-ghost);
             transform: translateZ(10px);
         }
 
@@ -180,7 +180,7 @@
         .skill-fill {
             height: 100%;
             background: var(--highlight);
-            box-shadow: 0 0 8px rgba(255, 74, 28, 0.4);
+            box-shadow: 0 0 8px var(--highlight-glow);
         }
 
         /* professional form inputs */
@@ -259,7 +259,7 @@
         }
 
         .proj-obj:hover {
-            border-color: rgba(255, 74, 28, 0.4);
+            border-color: var(--highlight-glow);
         }
 
         .proj-obj .icon {
@@ -327,7 +327,7 @@
             width: 100px;
             height: 100px;
             background: transparent;
-            border: 1px solid rgba(255, 74, 28, 0.3);
+            border: 1px solid var(--highlight-ghost);
             animation: spin 16s infinite linear;
         }
 
@@ -561,7 +561,7 @@
         const CONFIG = {
             name: "Demo",
             title: "3D Portfolio",
-            theme: "forge", // forge | midnight | arctic | terminal | ember
+            theme: "midnight", // forge | midnight | arctic | terminal | ember
             bootSequence: [
                 "> INITIALIZING...",
                 "> LOADING COMPONENTS...",
@@ -619,6 +619,8 @@
         root.style.setProperty('--panel-bg', theme.panel);
         root.style.setProperty('--highlight', theme.accent);
         root.style.setProperty('--text-color', theme.text);
+        root.style.setProperty('--highlight-ghost', theme.accent + '4D');
+        root.style.setProperty('--highlight-glow', theme.accent + '66');
 
         // apply colors to hover rules
         const glitchStyle = document.createElement('style');
