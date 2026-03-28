@@ -40,8 +40,8 @@
 
         /* 3d scene root */
         #scene {
-            width: 100%;
-            height: 100%;
+            width: 0;
+            height: 0;
             position: absolute;
             top: 50%;
             left: 50%;
@@ -111,12 +111,12 @@
         /* background detail */
         .grid {
             position: absolute;
-            width: 4000px;
-            height: 4000px;
-            top: -2000px;
-            left: -2000px;
+            width: 3000px;
+            height: 3000px;
+            top: -1500px;
+            left: -1500px;
             background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 100px 100px;
+            background-size: 80px 80px;
             transform: translateZ(-800px);
             pointer-events: none;
             will-change: transform;
@@ -316,7 +316,7 @@
             <div class="grid"></div>
 
             <!-- about -->
-            <div class="node" data-pos="-600,0,-200" data-rot="0,35">
+            <div class="node" data-pos="-1000,0,0" data-rot="0,90">
                 <div class="node-content panel">
                     <h2>About</h2>
                     <p>Systems architect obsessed with minimal, resilient interfaces and performant logic.</p>
@@ -338,7 +338,7 @@
             </div>
 
             <!-- projects -->
-            <div class="node" data-pos="0,-100,-800" data-rot="0,0">
+            <div class="node" data-pos="0,0,-1000" data-rot="0,0">
                 <div class="node-content">
                     <h2 class="hub-title">Projects</h2>
 
@@ -368,7 +368,7 @@
             </div>
 
             <!-- experiments -->
-            <div class="node" data-pos="700,200,-300" data-rot="-15,-40">
+            <div class="node" data-pos="1000,0,0" data-rot="0,-90">
                 <div class="node-content panel" style="background: transparent; border: none; box-shadow: none;">
                     <h2>Experiments</h2>
                     <p>Volumetric artifacts and math.</p>
@@ -378,7 +378,7 @@
             </div>
 
             <!-- contact -->
-            <div class="node" data-pos="0,500,400" data-rot="-30,180">
+            <div class="node" data-pos="0,0,1000" data-rot="0,180">
                 <div class="node-content panel">
                     <h2>Secure Comms</h2>
                     <p>Establish a direct connection.</p>
@@ -391,15 +391,15 @@
         </div>
     </div>
 
-    <div class="overlay">DRAG TO ROTATE • SCROLL TO DOLLY • CLICK TO FOCUS</div>
+    <div class="overlay">DRAG TO ROTATE | SCROLL TO DOLLY | CLICK TO FOCUS</div>
 
     <script>
         const scene = document.getElementById('scene');
         const nodes = document.querySelectorAll('.node');
 
         /* cam state/targets */
-        const obj = { x: 0, y: 0, z: 400, rx: 0, ry: 0 };
-        const tar = { x: 0, y: 0, z: 400, rx: 0, ry: 0 };
+        const obj = { x: 0, y: 0, z: 0, rx: 0, ry: 0 };
+        const tar = { x: 0, y: 0, z: 0, rx: 0, ry: 0 };
 
         /* init scene nodes */
         const parsedNodes = [];
@@ -462,7 +462,7 @@
             obj.x += (tar.x - obj.x) * ease; obj.y += (tar.y - obj.y) * ease; obj.z += (tar.z - obj.z) * ease;
             obj.rx += (tar.rx - obj.rx) * ease; obj.ry += (tar.ry - obj.ry) * ease;
 
-            scene.style.transform = `translate(-50%, -50%) rotateX(${-obj.rx}deg) rotateY(${-obj.ry}deg) translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)`;
+            scene.style.transform = `rotateX(${-obj.rx}deg) rotateY(${-obj.ry}deg) translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)`;
 
             /* proximity checks */
             parsedNodes.forEach(({ node, x, y, z }) => {
