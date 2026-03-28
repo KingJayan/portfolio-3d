@@ -406,7 +406,7 @@
         nodes.forEach(node => {
             const [x, y, z] = node.dataset.pos.split(',').map(Number);
             const [rx, ry] = node.dataset.rot.split(',').map(Number);
-            node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+            node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg)`;
 
             parsedNodes.push({ node, x, y, z });
 
