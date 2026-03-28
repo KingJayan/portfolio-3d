@@ -296,6 +296,43 @@
             }
         }
 
+        /* 2d ui */
+        .ui-nav {
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .ui-btn {
+            background: rgba(26, 27, 30, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+            width: auto;
+        }
+
+        .ui-btn:hover {
+            color: var(--highlight);
+            background: rgba(33, 35, 39, 0.8);
+            border-color: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
         .overlay {
             position: absolute;
             bottom: 30px;
@@ -393,6 +430,14 @@
 
     <div class="overlay">DRAG TO ROTATE | SCROLL TO DOLLY | CLICK TO FOCUS</div>
 
+    <div class="ui-nav">
+        <button class="ui-btn" id="nav-home">Home</button>
+        <button class="ui-btn" id="nav-about">About</button>
+        <button class="ui-btn" id="nav-proj">Projects</button>
+        <button class="ui-btn" id="nav-exp">Experiments</button>
+        <button class="ui-btn" id="nav-contact">Contact</button>
+    </div>
+
     <script>
         const scene = document.getElementById('scene');
         const nodes = document.querySelectorAll('.node');
@@ -408,10 +453,7 @@
             const [rx, ry] = node.dataset.rot.split(',').map(Number);
             node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg)`;
 
-            parsedNodes.push({ node, x, y, z });
-
-            /* cam focus click */
-            node.addEventListener('click', () => {
+            const focusFn = () => {
                 const dist = 600;
                 const rX = rx * Math.PI / 180;
                 const rY = ry * Math.PI / 180;
@@ -419,8 +461,22 @@
                 tar.y = y - Math.sin(rX) * dist;
                 tar.z = z + Math.cos(rY) * Math.cos(rX) * dist;
                 tar.rx = rx; tar.ry = ry;
-            });
+            };
+
+            parsedNodes.push({ node, x, y, z, focusFn });
+
+            /* cam focus click */
+            node.addEventListener('click', focusFn);
         });
+
+        /* bind ui nav */
+        document.getElementById('nav-home').addEventListener('click', () => {
+            tar.x = 0; tar.y = 0; tar.z = 0; tar.rx = 0; tar.ry = 0;
+        });
+        document.getElementById('nav-about').addEventListener('click', parsedNodes[0].focusFn);
+        document.getElementById('nav-proj').addEventListener('click', parsedNodes[1].focusFn);
+        document.getElementById('nav-exp').addEventListener('click', parsedNodes[2].focusFn);
+        document.getElementById('nav-contact').addEventListener('click', parsedNodes[3].focusFn);
 
         /* sub-object toggle */
         document.querySelectorAll('.proj-obj').forEach(p => {
