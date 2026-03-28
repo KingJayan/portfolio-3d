@@ -445,74 +445,30 @@
 
             <!-- about -->
             <div class="node" data-pos="-1000,0,0" data-rot="0,90">
-                <div class="node-content panel">
-                    <h2>About</h2>
-                    <p>Systems architect obsessed with minimal, resilient interfaces and performant logic.</p>
-                    <div class="skill-group">
-                        <span class="skill-label">Architecture</span>
-                        <div class="skill-bar">
-                            <div class="skill-fill" style="width: 90%;"></div>
-                        </div>
-                        <span class="skill-label">WebGL / 3D Graphics</span>
-                        <div class="skill-bar">
-                            <div class="skill-fill" style="width: 75%;"></div>
-                        </div>
-                        <span class="skill-label">System Optimization</span>
-                        <div class="skill-bar">
-                            <div class="skill-fill" style="width: 85%;"></div>
-                        </div>
-                    </div>
+                <div class="node-content panel" id="render-about">
+                    <!-- Config rendered here -->
                 </div>
             </div>
 
             <!-- projects -->
             <div class="node" data-pos="0,0,-1000" data-rot="0,0">
-                <div class="node-content">
-                    <h2 class="hub-title">Projects</h2>
-
-                    <div class="proj-obj" style="left: -200px; top: 20px; animation-delay: 0s;">
-                        <div class="icon">01</div>
-                        <div class="info">
-                            <h3>Prism Core</h3>
-                            <p>Distributed real-time rendering engine framework.</p>
-                        </div>
-                    </div>
-                    <div class="proj-obj" style="left: 0px; top: 120px; animation-delay: -1s;">
-                        <div class="icon">02</div>
-                        <div class="info">
-                            <h3>Void UI</h3>
-                            <p>Dark-industrial CSS framework for enterprise tools.</p>
-                        </div>
-                    </div>
-                    <div class="proj-obj" style="left: 200px; top: 0px; animation-delay: -2s;">
-                        <div class="icon">03</div>
-                        <div class="info">
-                            <h3>Neural Mesh</h3>
-                            <p>Data visualization tool for edge ML topologies.</p>
-                        </div>
-                    </div>
-
+                <div class="node-content" id="render-proj">
+                    <!-- Config rendered here -->
                 </div>
             </div>
 
             <!-- experiments -->
             <div class="node" data-pos="1000,0,0" data-rot="0,-90">
-                <div class="node-content panel" style="background: transparent; border: none; box-shadow: none;">
-                    <h2>Experiments</h2>
-                    <p>Volumetric artifacts and math.</p>
-                    <div class="exp-shape" style="top: 150px; left: 0; border-radius: 50%;"></div>
-                    <div class="exp-shape" style="top: 150px; left: 150px; animation-duration: 7s;"></div>
+                <div class="node-content panel" id="render-exp"
+                    style="background: transparent; border: none; box-shadow: none;">
+                    <!-- Config rendered here -->
                 </div>
             </div>
 
             <!-- contact -->
             <div class="node" data-pos="0,0,1000" data-rot="0,180">
-                <div class="node-content panel">
-                    <h2>Secure Comms</h2>
-                    <p>Establish a direct connection.</p>
-                    <input type="text" placeholder="Incoming Identity" />
-                    <textarea rows="3" placeholder="Payload..."></textarea>
-                    <button>Transmit</button>
+                <div class="node-content panel" id="render-contact">
+                    <!-- Config rendered here -->
                 </div>
             </div>
 
@@ -535,19 +491,84 @@
     </div>
 
     <div id="load-screen">
-        <div class="boot-text" style="animation-delay: 0.2s;">> INITIALIZING CORE...</div>
-        <div class="boot-text" style="animation-delay: 0.5s;">> LOADING SPATIAL MAPPING...</div>
-        <div class="boot-text" style="animation-delay: 0.8s;">> ESTABLISHING LINK...</div>
-        <div class="boot-text" style="animation-delay: 1.2s;">> SYSTEM READY.</div>
+        <div class="boot-text" style="animation-delay: 0.2s;">> INITIALIZING...</div>
+        <div class="boot-text" style="animation-delay: 0.5s;">> LOADING COMPONENTS...</div>
+        <div class="boot-text" style="animation-delay: 0.8s;">> RENDERING SCENE...</div>
+        <div class="boot-text" style="animation-delay: 1.2s;">> READY.</div>
     </div>
 
     <script>
+        // TEMPLATE CONFIGURATION
+        const CONFIG = {
+            about: {
+                title: "About",
+                text: "i make stuff",
+                skills: [
+                    { name: "HTML", progress: 90 },
+                    { name: "WebGL / 3D Graphics", progress: 75 },
+                    { name: "3d CSS", progress: 85 }
+                ]
+            },
+            projects: {
+                title: "Projects",
+                items: [
+                    { id: "01", name: "project 1", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: -200, top: 20, delay: 0 },
+                    { id: "02", name: "project 2", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: 0, top: 120, delay: -1 },
+                    { id: "03", name: "project 3", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: 200, top: 0, delay: -2 }
+                ]
+            },
+            experiments: {
+                title: "Experiments",
+                text: "lorem ipsum"
+            },
+            contact: {
+                title: "Contact Me",
+                text: "idk",
+                placeholders: { name: "Name", message: "Message..." },
+                buttonText: "send"
+            }
+        };
+
+        // dom render function - do not edit
+        document.getElementById('render-about').innerHTML = `
+            <h2>${CONFIG.about.title}</h2>
+            <p>${CONFIG.about.text}</p>
+            <div class="skill-group">
+                ${CONFIG.about.skills.map(s => `
+                    <span class="skill-label">${s.name}</span>
+                    <div class="skill-bar"><div class="skill-fill" style="width: ${s.progress}%;"></div></div>
+                `).join('')}
+            </div>
+        `;
+        document.getElementById('render-proj').innerHTML = `
+            <h2 class="hub-title">${CONFIG.projects.title}</h2>
+            ${CONFIG.projects.items.map(p => `
+                <div class="proj-obj" style="left: ${p.left}px; top: ${p.top}px; animation-delay: ${p.delay}s;">
+                    <div class="icon">${p.id}</div>
+                    <div class="info"><h3>${p.name}</h3><p>${p.desc}</p></div>
+                </div>
+            `).join('')}
+        `;
+        document.getElementById('render-exp').innerHTML = `
+            <h2>${CONFIG.experiments.title}</h2>
+            <p>${CONFIG.experiments.text}</p>
+            <div class="exp-shape" style="top: 150px; left: 0; border-radius: 50%;"></div>
+            <div class="exp-shape" style="top: 150px; left: 150px; animation-duration: 7s;"></div>
+        `;
+        document.getElementById('render-contact').innerHTML = `
+            <h2>${CONFIG.contact.title}</h2>
+            <p>${CONFIG.contact.text}</p>
+            <input type="text" placeholder="${CONFIG.contact.placeholders.name}" />
+            <textarea rows="3" placeholder="${CONFIG.contact.placeholders.message}"></textarea>
+            <button>${CONFIG.contact.buttonText}</button>
+        `;
+
         const scene = document.getElementById('scene');
         const nodes = document.querySelectorAll('.node');
 
         /* cam state/targets */
-        const obj = { x: 0, y: 0, z: 0, rx: 0, ry: 0 };
-        const tar = { x: 0, y: 0, z: 0, rx: 0, ry: 0 };
+        const obj = { x: 0, y: 175, z: 0, rx: 0, ry: 0 };
+        const tar = { x: 0, y: 175, z: 0, rx: 0, ry: 0 };
 
         /* init scene nodes */
         const parsedNodes = [];
