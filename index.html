@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,25 +17,37 @@
         }
 
         body {
-            margin: 0; overflow: hidden;
-            background-color: var(--bg-color); color: var(--text-color);
+            margin: 0;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            user-select: none; cursor: grab;
+            user-select: none;
+            cursor: grab;
         }
-        body:active { cursor: grabbing; }
+
+        body:active {
+            cursor: grabbing;
+        }
 
         #viewport {
-            width: 100vw; height: 100vh;
+            width: 100vw;
+            height: 100vh;
             perspective: 1000px;
-            overflow: hidden; position: relative;
+            overflow: hidden;
+            position: relative;
         }
 
         /* 3d scene root */
         #scene {
-            width: 100%; height: 100%;
-            position: absolute; top: 50%; left: 50%;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
             transform-style: preserve-3d;
             transform-origin: center center;
+            will-change: transform;
         }
 
         /* room/object container */
@@ -42,16 +55,21 @@
             position: absolute;
             transform-style: preserve-3d;
             border-radius: 16px;
+            will-change: transform;
         }
-        
+
         /* content reveal layer */
         .node-content {
             opacity: 0.1;
             transform: translateZ(-30px);
             transition: opacity 0.6s ease, transform 0.6s ease;
             pointer-events: none;
-            display: flex; flex-direction: column; align-items: center; text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
+
         .node.near .node-content {
             opacity: 1;
             transform: translateZ(0);
@@ -62,244 +80,405 @@
         .panel {
             background: var(--panel-bg);
             box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
-            border-radius: 16px; padding: 40px; box-sizing: border-box;
-            border: 1px solid rgba(255,255,255,0.02);
+            border-radius: 16px;
+            padding: 40px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.02);
             transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.4s ease;
             width: 380px;
         }
+
         .panel:hover {
-            box-shadow: 0 0 30px rgba(255,255,255,0.03), 16px 16px 30px var(--shadow-dark), -16px -16px 30px var(--shadow-light);
-            border-color: rgba(255,255,255,0.06);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.03), 16px 16px 30px var(--shadow-dark), -16px -16px 30px var(--shadow-light);
+            border-color: rgba(255, 255, 255, 0.06);
             transform: translateZ(10px);
         }
 
-        h2 { margin: 0 0 16px 0; color: var(--highlight); font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
-        p { margin: 0 0 16px 0; line-height: 1.6; font-size: 0.95rem; }
+        h2 {
+            margin: 0 0 16px 0;
+            color: var(--highlight);
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        p {
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
 
         /* background detail */
         .grid {
-            position: absolute; width: 4000px; height: 4000px; top: -2000px; left: -2000px;
-            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 100px 100px; transform: translateZ(-800px); pointer-events: none;
+            position: absolute;
+            width: 4000px;
+            height: 4000px;
+            top: -2000px;
+            left: -2000px;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100px 100px;
+            transform: translateZ(-800px);
+            pointer-events: none;
+            will-change: transform;
         }
 
         /* skills visualizer */
-        .skill-group { width: 100%; text-align: left; }
-        .skill-label { font-size: 0.8rem; margin-bottom: 6px; display: block; }
-        .skill-bar { width: 100%; height: 6px; background: #18191c; border-radius: 3px; margin-bottom: 16px; box-shadow: inset 2px 2px 5px var(--shadow-dark); }
-        .skill-fill { height: 100%; background: var(--highlight); border-radius: 3px; box-shadow: 0 0 8px rgba(255,255,255,0.2); }
+        .skill-group {
+            width: 100%;
+            text-align: left;
+        }
+
+        .skill-label {
+            font-size: 0.8rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .skill-bar {
+            width: 100%;
+            height: 6px;
+            background: #18191c;
+            border-radius: 3px;
+            margin-bottom: 16px;
+            box-shadow: inset 2px 2px 5px var(--shadow-dark);
+        }
+
+        .skill-fill {
+            height: 100%;
+            background: var(--highlight);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
 
         /* industrial form inputs */
-        input, textarea {
-            background: #1e1f23; border: 1px solid rgba(255,255,255,0.03);
-            color: var(--text-color); padding: 12px; border-radius: 8px;
-            width: 100%; box-sizing: border-box; margin-bottom: 16px;
+        input,
+        textarea {
+            background: #1e1f23;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-color);
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 16px;
             box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-            font-family: inherit; resize: none;
+            font-family: inherit;
+            resize: none;
         }
-        input:focus, textarea:focus { outline: none; border-color: rgba(255,255,255,0.1); }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
         button {
-            background: var(--panel-bg); color: var(--highlight); padding: 12px 24px; border: none;
-            border-radius: 8px; cursor: pointer; font-weight: 600; font-family: inherit; letter-spacing: 1px;
-            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light); transition: all 0.2s; width: 100%;
+            background: var(--panel-bg);
+            color: var(--highlight);
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: inherit;
+            letter-spacing: 1px;
+            box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+            transition: all 0.2s;
+            width: 100%;
         }
-        button:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
+
+        button:active {
+            box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+        }
 
         /* project sub-objects */
-        .hub-title { transform: translateZ(50px); pointer-events: none; margin-bottom: 40px; }
+        .hub-title {
+            transform: translateZ(50px);
+            pointer-events: none;
+            margin-bottom: 40px;
+        }
+
         .proj-obj {
             position: absolute;
-            width: 80px; height: 80px;
+            width: 80px;
+            height: 80px;
             background: var(--panel-bg);
-            border-radius: 12px; cursor: pointer;
+            border-radius: 12px;
+            cursor: pointer;
             box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
             transform-style: preserve-3d;
-            border: 1px solid rgba(255,255,255,0.02);
+            border: 1px solid rgba(255, 255, 255, 0.02);
             animation: float 4s infinite ease-in-out;
             overflow: hidden;
         }
-        .proj-obj:hover { border-color: rgba(255,255,255,0.1); box-shadow: 0 0 20px rgba(255,255,255,0.05), 12px 12px 20px var(--shadow-dark); }
-        .proj-obj .icon { font-size: 1.5rem; color: var(--highlight); transition: opacity 0.3s; }
-        .proj-obj .info { opacity: 0; position: absolute; padding: 20px; text-align: left; transition: opacity 0.3s; pointer-events: none; width: 100%; box-sizing:border-box;}
-        
-        .proj-obj.active { width: 260px; height: 140px; border-radius: 16px; z-index: 10; animation: none; transform: translateZ(40px) !important; }
-        .proj-obj.active .icon { opacity: 0; }
-        .proj-obj.active .info { opacity: 1; pointer-events: auto; }
-        .proj-obj h3 { margin: 0 0 8px 0; color: var(--highlight); font-size: 1.1rem; }
-        .proj-obj p { font-size: 0.85rem; margin: 0; }
+
+        .proj-obj:hover {
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.05), 12px 12px 20px var(--shadow-dark);
+        }
+
+        .proj-obj .icon {
+            font-size: 1.5rem;
+            color: var(--highlight);
+            transition: opacity 0.3s;
+        }
+
+        .proj-obj .info {
+            opacity: 0;
+            position: absolute;
+            padding: 20px;
+            text-align: left;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .proj-obj.active {
+            width: 260px;
+            height: 140px;
+            border-radius: 16px;
+            z-index: 10;
+            animation: none;
+            transform: translateZ(40px) !important;
+        }
+
+        .proj-obj.active .icon {
+            opacity: 0;
+        }
+
+        .proj-obj.active .info {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .proj-obj h3 {
+            margin: 0 0 8px 0;
+            color: var(--highlight);
+            font-size: 1.1rem;
+        }
+
+        .proj-obj p {
+            font-size: 0.85rem;
+            margin: 0;
+        }
 
         /* volumetric shapes */
         .exp-shape {
-            position: absolute; width: 100px; height: 100px;
-            background: transparent; border: 2px solid rgba(255,255,255,0.05);
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.05);
             animation: spin 10s infinite linear;
         }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-        @keyframes spin { to { transform: rotateY(360deg) rotateX(360deg); } }
+        @keyframes float {
 
-        .overlay { position: absolute; bottom: 30px; width: 100%; text-align: center; font-size: 0.8rem; color: #666; pointer-events: none; z-index: 100; }
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotateY(360deg) rotateX(360deg);
+            }
+        }
+
+        .overlay {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            pointer-events: none;
+            z-index: 100;
+        }
     </style>
 </head>
+
 <body>
 
-<div id="viewport">
-    <div id="scene">
-        <div class="grid"></div>
+    <div id="viewport">
+        <div id="scene">
+            <div class="grid"></div>
 
-        <!-- about -->
-        <div class="node" data-pos="-600,0,-200" data-rot="0,35">
-            <div class="node-content panel">
-                <h2>About</h2>
-                <p>Systems architect obsessed with minimal, resilient interfaces and performant logic.</p>
-                <div class="skill-group">
-                    <span class="skill-label">Architecture</span>
-                    <div class="skill-bar"><div class="skill-fill" style="width: 90%;"></div></div>
-                    <span class="skill-label">WebGL / 3D Graphics</span>
-                    <div class="skill-bar"><div class="skill-fill" style="width: 75%;"></div></div>
-                    <span class="skill-label">System Optimization</span>
-                    <div class="skill-bar"><div class="skill-fill" style="width: 85%;"></div></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- projects -->
-        <div class="node" data-pos="0,-100,-800" data-rot="0,0">
-            <div class="node-content">
-                <h2 class="hub-title">Projects</h2>
-                
-                <div class="proj-obj" style="left: -200px; top: 20px; animation-delay: 0s;">
-                    <div class="icon">01</div>
-                    <div class="info">
-                        <h3>Prism Core</h3>
-                        <p>Distributed real-time rendering engine framework.</p>
+            <!-- about -->
+            <div class="node" data-pos="-600,0,-200" data-rot="0,35">
+                <div class="node-content panel">
+                    <h2>About</h2>
+                    <p>Systems architect obsessed with minimal, resilient interfaces and performant logic.</p>
+                    <div class="skill-group">
+                        <span class="skill-label">Architecture</span>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 90%;"></div>
+                        </div>
+                        <span class="skill-label">WebGL / 3D Graphics</span>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 75%;"></div>
+                        </div>
+                        <span class="skill-label">System Optimization</span>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 85%;"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="proj-obj" style="left: 0px; top: 120px; animation-delay: -1s;">
-                    <div class="icon">02</div>
-                    <div class="info">
-                        <h3>Void UI</h3>
-                        <p>Dark-industrial CSS framework for enterprise tools.</p>
+            </div>
+
+            <!-- projects -->
+            <div class="node" data-pos="0,-100,-800" data-rot="0,0">
+                <div class="node-content">
+                    <h2 class="hub-title">Projects</h2>
+
+                    <div class="proj-obj" style="left: -200px; top: 20px; animation-delay: 0s;">
+                        <div class="icon">01</div>
+                        <div class="info">
+                            <h3>Prism Core</h3>
+                            <p>Distributed real-time rendering engine framework.</p>
+                        </div>
                     </div>
-                </div>
-                <div class="proj-obj" style="left: 200px; top: 0px; animation-delay: -2s;">
-                    <div class="icon">03</div>
-                    <div class="info">
-                        <h3>Neural Mesh</h3>
-                        <p>Data visualization tool for edge ML topologies.</p>
+                    <div class="proj-obj" style="left: 0px; top: 120px; animation-delay: -1s;">
+                        <div class="icon">02</div>
+                        <div class="info">
+                            <h3>Void UI</h3>
+                            <p>Dark-industrial CSS framework for enterprise tools.</p>
+                        </div>
                     </div>
+                    <div class="proj-obj" style="left: 200px; top: 0px; animation-delay: -2s;">
+                        <div class="icon">03</div>
+                        <div class="info">
+                            <h3>Neural Mesh</h3>
+                            <p>Data visualization tool for edge ML topologies.</p>
+                        </div>
+                    </div>
+
                 </div>
-
             </div>
-        </div>
 
-        <!-- experiments -->
-        <div class="node" data-pos="700,200,-300" data-rot="-15,-40">
-            <div class="node-content panel" style="background: transparent; border: none; box-shadow: none;">
-                <h2>Experiments</h2>
-                <p>Volumetric artifacts and math.</p>
-                <div class="exp-shape" style="top: 150px; left: 0; border-radius: 50%;"></div>
-                <div class="exp-shape" style="top: 150px; left: 150px; animation-duration: 7s;"></div>
+            <!-- experiments -->
+            <div class="node" data-pos="700,200,-300" data-rot="-15,-40">
+                <div class="node-content panel" style="background: transparent; border: none; box-shadow: none;">
+                    <h2>Experiments</h2>
+                    <p>Volumetric artifacts and math.</p>
+                    <div class="exp-shape" style="top: 150px; left: 0; border-radius: 50%;"></div>
+                    <div class="exp-shape" style="top: 150px; left: 150px; animation-duration: 7s;"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- contact -->
-        <div class="node" data-pos="0,500,400" data-rot="-30,180">
-            <div class="node-content panel">
-                <h2>Secure Comms</h2>
-                <p>Establish a direct connection.</p>
-                <input type="text" placeholder="Incoming Identity" />
-                <textarea rows="3" placeholder="Payload..."></textarea>
-                <button>Transmit</button>
+            <!-- contact -->
+            <div class="node" data-pos="0,500,400" data-rot="-30,180">
+                <div class="node-content panel">
+                    <h2>Secure Comms</h2>
+                    <p>Establish a direct connection.</p>
+                    <input type="text" placeholder="Incoming Identity" />
+                    <textarea rows="3" placeholder="Payload..."></textarea>
+                    <button>Transmit</button>
+                </div>
             </div>
-        </div>
 
+        </div>
     </div>
-</div>
 
-<div class="overlay">DRAG TO ROTATE • SCROLL TO DOLLY • CLICK TO FOCUS</div>
+    <div class="overlay">DRAG TO ROTATE • SCROLL TO DOLLY • CLICK TO FOCUS</div>
 
-<script>
-    const scene = document.getElementById('scene');
-    const nodes = document.querySelectorAll('.node');
+    <script>
+        const scene = document.getElementById('scene');
+        const nodes = document.querySelectorAll('.node');
 
-    /* cam state/targets */
-    const obj = { x: 0, y: 0, z: 1200, rx: 0, ry: 0 };
-    const tar = { x: 0, y: 0, z: 1200, rx: 0, ry: 0 };
+        /* cam state/targets */
+        const obj = { x: 0, y: 0, z: 400, rx: 0, ry: 0 };
+        const tar = { x: 0, y: 0, z: 400, rx: 0, ry: 0 };
 
-    /* init scene nodes */
-    nodes.forEach(node => {
-        const [x, y, z] = node.dataset.pos.split(',').map(Number);
-        const [rx, ry] = node.dataset.rot.split(',').map(Number);
-        node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
-        
-        /* cam focus click */
-        node.addEventListener('click', () => {
-            const dist = 600;
-            const rX = rx * Math.PI / 180;
-            const rY = ry * Math.PI / 180;
-            tar.x = x + Math.sin(rY) * Math.cos(rX) * dist;
-            tar.y = y - Math.sin(rX) * dist;
-            tar.z = z + Math.cos(rY) * Math.cos(rX) * dist;
-            tar.rx = rx; tar.ry = ry;
-        });
-    });
-
-    /* sub-object toggle */
-    document.querySelectorAll('.proj-obj').forEach(p => {
-        p.addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.querySelectorAll('.proj-obj').forEach(o => o !== p && o.classList.remove('active'));
-            p.classList.toggle('active');
-        });
-    });
-
-    /* drag rotation */
-    let dragging = false;
-    let sX = 0, sY = 0;
-
-    window.addEventListener('mousedown', e => { dragging = true; sX = e.clientX; sY = e.clientY; });
-    window.addEventListener('mousemove', e => {
-        if (!dragging) return;
-        tar.ry -= (e.clientX - sX) * 0.15;
-        tar.rx += (e.clientY - sY) * 0.15;
-        tar.rx = Math.max(-80, Math.min(80, tar.rx));
-        sX = e.clientX; sY = e.clientY;
-    });
-    window.addEventListener('mouseup', () => dragging = false);
-    window.addEventListener('mouseleave', () => dragging = false);
-
-    /* dolly movement */
-    window.addEventListener('wheel', e => {
-        const amt = e.deltaY * 1.5;
-        const ryR = tar.ry * Math.PI / 180;
-        const rxR = tar.rx * Math.PI / 180;
-        tar.x += Math.sin(ryR) * Math.cos(rxR) * amt;
-        tar.y -= Math.sin(rxR) * amt;
-        tar.z += Math.cos(ryR) * Math.cos(rxR) * amt;
-    }, { passive: true });
-
-    /* render loop */
-    function loop() {
-        const ease = 0.05;
-        obj.x += (tar.x - obj.x) * ease; obj.y += (tar.y - obj.y) * ease; obj.z += (tar.z - obj.z) * ease;
-        obj.rx += (tar.rx - obj.rx) * ease; obj.ry += (tar.ry - obj.ry) * ease;
-
-        scene.style.transform = `translate(-50%, -50%) rotateX(${-obj.rx}deg) rotateY(${-obj.ry}deg) translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)`;
-
-        /* proximity checks */
+        /* init scene nodes */
+        const parsedNodes = [];
         nodes.forEach(node => {
-            const [nx, ny, nz] = node.dataset.pos.split(',').map(Number);
-            const dist = Math.hypot(nx - obj.x, ny - obj.y, nz - obj.z);
-            node.classList.toggle('near', dist < 900);
+            const [x, y, z] = node.dataset.pos.split(',').map(Number);
+            const [rx, ry] = node.dataset.rot.split(',').map(Number);
+            node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+
+            parsedNodes.push({ node, x, y, z });
+
+            /* cam focus click */
+            node.addEventListener('click', () => {
+                const dist = 600;
+                const rX = rx * Math.PI / 180;
+                const rY = ry * Math.PI / 180;
+                tar.x = x + Math.sin(rY) * Math.cos(rX) * dist;
+                tar.y = y - Math.sin(rX) * dist;
+                tar.z = z + Math.cos(rY) * Math.cos(rX) * dist;
+                tar.rx = rx; tar.ry = ry;
+            });
         });
 
-        requestAnimationFrame(loop);
-    }
-    loop();
-</script>
+        /* sub-object toggle */
+        document.querySelectorAll('.proj-obj').forEach(p => {
+            p.addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.querySelectorAll('.proj-obj').forEach(o => o !== p && o.classList.remove('active'));
+                p.classList.toggle('active');
+            });
+        });
+
+        /* drag rotation */
+        let dragging = false;
+        let sX = 0, sY = 0;
+
+        window.addEventListener('mousedown', e => { dragging = true; sX = e.clientX; sY = e.clientY; });
+        window.addEventListener('mousemove', e => {
+            if (!dragging) return;
+            tar.ry -= (e.clientX - sX) * 0.15;
+            tar.rx += (e.clientY - sY) * 0.15;
+            tar.rx = Math.max(-80, Math.min(80, tar.rx));
+            sX = e.clientX; sY = e.clientY;
+        });
+        window.addEventListener('mouseup', () => dragging = false);
+        window.addEventListener('mouseleave', () => dragging = false);
+
+        /* dolly movement */
+        window.addEventListener('wheel', e => {
+            const amt = e.deltaY * 1.5;
+            const ryR = tar.ry * Math.PI / 180;
+            const rxR = tar.rx * Math.PI / 180;
+            tar.x += Math.sin(ryR) * Math.cos(rxR) * amt;
+            tar.y -= Math.sin(rxR) * amt;
+            tar.z += Math.cos(ryR) * Math.cos(rxR) * amt;
+        }, { passive: true });
+
+        /* render loop */
+        function loop() {
+            const ease = 0.05;
+            obj.x += (tar.x - obj.x) * ease; obj.y += (tar.y - obj.y) * ease; obj.z += (tar.z - obj.z) * ease;
+            obj.rx += (tar.rx - obj.rx) * ease; obj.ry += (tar.ry - obj.ry) * ease;
+
+            scene.style.transform = `translate(-50%, -50%) rotateX(${-obj.rx}deg) rotateY(${-obj.ry}deg) translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)`;
+
+            /* proximity checks */
+            parsedNodes.forEach(({ node, x, y, z }) => {
+                const dist = Math.hypot(x - obj.x, y - obj.y, z - obj.z);
+                if (dist < 1000) {
+                    if (!node.classList.contains('near')) node.classList.add('near');
+                } else {
+                    if (node.classList.contains('near')) node.classList.remove('near');
+                }
+            });
+
+            requestAnimationFrame(loop);
+        }
+        loop();
+    </script>
 
 </body>
+
 </html>
