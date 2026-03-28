@@ -13,6 +13,7 @@
             --highlight: #e0e5f0;
             --shadow-dark: #16171a;
             --shadow-light: #2c2f34;
+            --accent: rgba(255, 255, 255, 0.08);
         }
 
         body {
@@ -29,24 +30,15 @@
             cursor: grabbing;
         }
 
-        /* 3D Container */
         #viewport {
             width: 100vw;
             height: 100vh;
-            perspective: 1200px;
+            perspective: 1000px;
             overflow: hidden;
+            position: relative;
         }
 
-        /* Camera wrapper for rotation (drag) and translation (scroll) */
-        #camera {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            transform-style: preserve-3d;
-            /* Using JS for smooth easing, no CSS transition needed here */
-        }
-
-        /* The local coordinate space for the panels */
+        /* The world space that moves around the camera */
         #scene {
             width: 100%;
             height: 100%;
@@ -54,20 +46,19 @@
             transform-style: preserve-3d;
             top: 50%;
             left: 50%;
-            /* Moving the origin to center */
-            transform: translate3d(-50%, -50%, 0);
+            /* Will be animated via JS */
+            transform-origin: center center;
         }
 
         /* Neumorphic floating panels */
         .panel {
             position: absolute;
-            width: 380px;
-            height: 240px;
+            width: 400px;
+            height: 300px;
             background: var(--panel-bg);
-            /* Subtle dark neumorphism */
             box-shadow: 12px 12px 24px var(--shadow-dark),
                        -12px -12px 24px var(--shadow-light);
-            border-radius: 16px;
+            border-radius: 12px;
             padding: 40px;
             box-sizing: border-box;
             display: flex;
@@ -75,24 +66,39 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            transition: box-shadow 0.3s ease, border-color 0.3s ease;
             transform-style: preserve-3d;
             border: 1px solid rgba(255,255,255,0.02);
-            /* Default transform to keep center alignment */
-            transform: translate(-50%, -50%);
+            transition: box-shadow 0.4s ease, border-color 0.4s ease, transform 0.4s ease;
+            cursor: pointer;
         }
 
         .panel:hover {
-            box-shadow: 18px 18px 30px var(--shadow-dark),
+            box-shadow: 0 0 40px rgba(255,255,255,0.05),
+                        18px 18px 30px var(--shadow-dark),
                        -18px -18px 30px var(--shadow-light);
-            border: 1px solid rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.08);
+            /* Glow / slight translate on hover */
+        }
+
+        .panel-content {
+            opacity: 0.1;
+            transform: translateZ(-20px) scale(0.95);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            pointer-events: none; /* Disable interaction until revealed */
+        }
+
+        /* Reveal content when camera is near */
+        .panel.near .panel-content {
+            opacity: 1;
+            transform: translateZ(20px) scale(1);
+            pointer-events: auto;
         }
 
         .panel h2 {
             margin: 0 0 16px 0;
             color: var(--highlight);
             font-weight: 500;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
@@ -104,21 +110,30 @@
             color: #888d96;
         }
 
-        /* Positioning the 4 panels in 3D space */
-        #about { transform: translate(-50%, -50%) translate3d(-450px, -200px, -200px) rotateY(25deg); }
-        #projects { transform: translate(-50%, -50%) translate3d(450px, -150px, -50px) rotateY(-20deg); }
-        #experiments { transform: translate(-50%, -50%) translate3d(-400px, 200px, 150px) rotateY(15deg) rotateX(10deg); }
-        #contact { transform: translate(-50%, -50%) translate3d(400px, 250px, 250px) rotateY(-15deg) rotateX(-5deg); }
-        
-        /* Optional: aesthetic grid overlay for industrial feel */
+        /* Background grid */
         .grid {
             position: absolute;
-            top: -200%; left: -200%; width: 400%; height: 400%;
+            width: 4000px;
+            height: 4000px;
+            top: -2000px;
+            left: -2000px;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 80px 80px;
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px;
             transform: translateZ(-800px);
+            pointer-events: none;
+        }
+
+        /* Minimal UI Overlay */
+        .overlay {
+            position: absolute;
+            bottom: 30px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #666;
+            letter-spacing: 1px;
             pointer-events: none;
         }
     </style>
@@ -126,58 +141,78 @@
 <body>
 
 <div id="viewport">
-    <div id="camera">
-        <div id="scene">
-            <!-- Background detail -->
-            <div class="grid"></div>
+    <div id="scene">
+        <div class="grid"></div>
 
-            <!-- Content Hub -->
-            <div class="panel" id="about">
+        <!-- Panels with 3D coordinates stored in data attributes -->
+        <!-- format: data-transform="x,y,z,rx,ry" -->
+        <div class="panel" id="about" data-pos="-500,-100,-300" data-rot="0,30">
+            <div class="panel-content">
                 <h2>About</h2>
-                <p>Welcome to my space. I build resilient, high-performance systems and immersive digital experiences.</p>
+                <p>Systems engineering & structural aesthetics. Building resilient, high-performance digital environments.</p>
             </div>
+        </div>
 
-            <div class="panel" id="projects">
+        <div class="panel" id="projects" data-pos="500,50,0" data-rot="0,-25">
+            <div class="panel-content">
                 <h2>Projects</h2>
-                <p>A curated showcase of recent engineering work, architectural designs, and deployments.</p>
+                <p>Architectural deployments, dark-mode interfaces, and optimized algorithms.</p>
             </div>
+        </div>
 
-            <div class="panel" id="experiments">
+        <div class="panel" id="experiments" data-pos="-200,300,400" data-rot="15,-10">
+            <div class="panel-content">
                 <h2>Experiments</h2>
-                <p>Bleeding-edge iterations, sandbox environments, and unrefined algorithmic prototypes.</p>
+                <p>Sandbox prototypes, volumetric rendering, and experimental physics.</p>
             </div>
+        </div>
 
-            <div class="panel" id="contact">
+        <div class="panel" id="contact" data-pos="400,250,-400" data-rot="-10,-40">
+            <div class="panel-content">
                 <h2>Contact</h2>
-                <p>Establish a secure connection. Reach out for collaborations or inquiries.</p>
+                <p>Secure transmission channels. Establish a connection for inquiries.</p>
             </div>
         </div>
     </div>
 </div>
 
-<script>
-    // Camera state
-    const cam = {
-        z: -300,
-        rotX: 0,
-        rotY: 0,
-        target: { z: -300, rotX: 0, rotY: 0 }
-    };
+<div class="overlay">DRAG TO ROTATE • SCROLL TO MOVE • CLICK TO FOCUS</div>
 
-    const cameraEl = document.getElementById('camera');
+<script>
+    const scene = document.getElementById('scene');
+    const panels = document.querySelectorAll('.panel');
+
+    // Camera state and target
+    const obj = { x: 0, y: 0, z: 1200, rx: 0, ry: 0 };
+    const tar = { x: 0, y: 0, z: 1200, rx: 0, ry: 0 };
+
+    // Initialize panel positions
+    panels.forEach(p => {
+        const [x, y, z] = p.dataset.pos.split(',').map(Number);
+        const [rx, ry] = p.dataset.rot.split(',').map(Number);
+        p.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+        
+        // Interaction: Click to focus camera
+        p.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent drag from firing if clicked
+            
+            // Calculate viewing position (offset back along panel's normal)
+            const dist = 500; // viewing distance
+            const rX = rx * Math.PI / 180;
+            const rY = ry * Math.PI / 180;
+            
+            tar.x = x + Math.sin(rY) * Math.cos(rX) * dist;
+            tar.y = y - Math.sin(rX) * dist;
+            tar.z = z + Math.cos(rY) * Math.cos(rX) * dist;
+            tar.rx = rx;
+            tar.ry = ry;
+        });
+    });
+
+    // Inputs: Drag to rotate
     let isDragging = false;
     let startX = 0, startY = 0;
 
-    // Scroll to move forward/back along Z axis
-    window.addEventListener('wheel', (e) => {
-        // DeltaY < 0 usually means scrolling up/forward
-        cam.target.z -= e.deltaY * 2.5; 
-        
-        // Boundaries to keep user in the hub
-        cam.target.z = Math.max(-2000, Math.min(800, cam.target.z));
-    }, { passive: true });
-
-    // Drag to rotate
     window.addEventListener('mousedown', (e) => {
         isDragging = true;
         startX = e.clientX;
@@ -186,37 +221,60 @@
 
     window.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
-        
-        const deltaX = e.clientX - startX;
-        const deltaY = e.clientY - startY;
-
-        cam.target.rotY += deltaX * 0.15;
-        cam.target.rotX -= deltaY * 0.15; // Invert logic for natural drag
-
-        // Limit pitch to avoid flipping
-        cam.target.rotX = Math.max(-60, Math.min(60, cam.target.rotX)); 
-
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        tar.ry -= dx * 0.15;
+        tar.rx += dy * 0.15; // Inverted for natural feel
+        tar.rx = Math.max(-80, Math.min(80, tar.rx)); // Clamp pitch
         startX = e.clientX;
         startY = e.clientY;
     });
 
-    window.addEventListener('mouseup', () => { isDragging = false; });
-    window.addEventListener('mouseleave', () => { isDragging = false; });
+    const release = () => { isDragging = false; };
+    window.addEventListener('mouseup', release);
+    window.addEventListener('mouseleave', release);
 
-    // Render loop for smooth easing
+    // Inputs: Scroll to move along view vector
+    window.addEventListener('wheel', (e) => {
+        const move = e.deltaY * 1.5;
+        const radY = tar.ry * Math.PI / 180;
+        const radX = tar.rx * Math.PI / 180;
+        
+        // Move forward/back based on camera's current rotation
+        tar.x += Math.sin(radY) * Math.cos(radX) * move;
+        tar.y -= Math.sin(radX) * move;
+        tar.z += Math.cos(radY) * Math.cos(radX) * move;
+    }, { passive: true });
+
+    // Animation Loop
     function animate() {
-        // Smooth interpolation
-        const ease = 0.08;
-        cam.z += (cam.target.z - cam.z) * ease;
-        cam.rotX += (cam.target.rotX - cam.rotX) * ease;
-        cam.rotY += (cam.target.rotY - cam.rotY) * ease;
+        // Interpolate (ease to target)
+        const ease = 0.06;
+        obj.x += (tar.x - obj.x) * ease;
+        obj.y += (tar.y - obj.y) * ease;
+        obj.z += (tar.z - obj.z) * ease;
+        obj.rx += (tar.rx - obj.rx) * ease;
+        obj.ry += (tar.ry - obj.ry) * ease;
 
-        // Apply transforms
-        cameraEl.style.transform = `
-            translateZ(${cam.z}px) 
-            rotateX(${cam.rotX}deg) 
-            rotateY(${cam.rotY}deg)
+        // Apply to scene (Inverse camera transform)
+        scene.style.transform = `
+            translate(-50%, -50%)
+            rotateX(${-obj.rx}deg) 
+            rotateY(${-obj.ry}deg) 
+            translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)
         `;
+
+        // Proximity detection
+        panels.forEach(p => {
+            const [px, py, pz] = p.dataset.pos.split(',').map(Number);
+            // Simple distance check
+            const dist = Math.hypot(px - obj.x, py - obj.y, pz - obj.z);
+            if (dist < 800) {
+                p.classList.add('near');
+            } else {
+                p.classList.remove('near');
+            }
+        });
 
         requestAnimationFrame(animate);
     }
