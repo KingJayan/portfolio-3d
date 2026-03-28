@@ -3,6 +3,8 @@
 ### description
 a single-file, immersive 3d portfolio experience. config-driven, minimalistic, dark-industrial aesthetic with a focus on spatial interaction and fluid camera movement.
 
+![midnight theme, particles background on about section](screenshots/midn-particles-about.png)
+
 ### features
 - **config-driven**: edit your bio, projects, and skills from a single json-like config block—no html/css hunting required.
 - **6-dof spatial camera**: smooth interpolation, tracking, and zoom logic.
