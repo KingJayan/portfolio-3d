@@ -15,7 +15,7 @@ a single-file, immersive 3d portfolio experience. config-driven, minimalistic, d
 ### setup
 1. clone or download the repository.
 2. open `index.html` in your editor.
-3. edit the `CONFIG` object at the very top of the `<script>` tag (lines 561-610)
+3. edit the `CONFIG` object at the very top of the `<script>` tag (lines 643-699)
 4. open `index.html` in a modern browser. no build step required.
 
 ### structure
