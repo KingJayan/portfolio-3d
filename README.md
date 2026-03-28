@@ -50,5 +50,12 @@ everything lives in `index.html`. the file is split into three sections:
 - **single-file**: no external assets. google fonts are used, but can be removed, and images are for docs only.
 - **vanilla-only**: zero dependencies. pure html, css transforms, and js.
 
+### limitations
+- **browser compatibility**: utilizes 3d css transforms and `backdrop-filter`. older browsers or those without hardware acceleration enabled will experience significant lag or visual artifacts.
+- **performance context**: while optimized, rendering many 3d elements via css has limits. keep component counts reasonable to maintain a fluid 60fps experience.
+- **safari/webkit**: to prevent known webkit compositing bugs, `backdrop-filter` is applied only to fixed overlays, not to 3d-transformed scene nodes.
+- **mobile UX**: currently optimized for mouse and trackpad interaction (6-dof panning and dolly zoom). mobile touch support is present but less precise.
+- **no dynamic backend**: as a static, single-file template, it does not include a backend. contact forms and social links must be hooked into external services.
+
 ### what its for
 curating engineering projects, prototypes, and artifacts in a persistent spatial environment.

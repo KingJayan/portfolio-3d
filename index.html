@@ -546,43 +546,14 @@
     <div id="viewport">
         <div id="scene">
             <div class="grid"></div>
-
-            <!-- about -->
-            <div class="node" data-pos="-1000,0,0" data-rot="0,90">
-                <div class="node-content panel" id="render-about">
-                    <!-- config rendered -->
-                </div>
-            </div>
-
-            <!-- projects -->
-            <div class="node" data-pos="0,0,-1000" data-rot="0,0">
-                <div class="node-content" id="render-proj">
-                    <!-- config rendered -->
-                </div>
-            </div>
-
-            <!-- experiments -->
-            <div class="node" data-pos="1000,0,0" data-rot="0,-90">
-                <div class="node-content panel" id="render-exp"
-                    style="background: transparent; border: none; box-shadow: none;">
-                    <!-- config rendered -->
-                </div>
-            </div>
-
-            <!-- contact -->
-            <div class="node" data-pos="0,0,1000" data-rot="0,180">
-                <div class="node-content panel" id="render-contact">
-                    <!-- config rendered -->
-                </div>
-            </div>
-
+            <!-- nodes auto-injected here -->
         </div>
     </div>
 
     <div class="overlay">DRAG TO ROTATE | SCROLL TO DOLLY | CLICK TO FOCUS</div>
 
     <div class="ui-nav" id="render-nav">
-        <!-- config rendered-->
+        <!-- buttons auto-injected here -->
     </div>
 
     <div class="console" id="console">
@@ -643,13 +614,13 @@
         const CONFIG = {
             name: "Demo",
             title: "3D Portfolio",
-            theme: "forge", // forge | midnight | arctic | terminal | ember
-            bg: "particles",   // none | particles | scanlines | nebula
+            theme: "forge",   // forge | midnight | arctic | terminal | ember
+            bg: "particles",  // none | particles | scanlines | nebula
             camera: {
                 scrollSpeed: 2, // dolly speed (higher = faster zoom)
-                dragSpeed: 0.5,  // rotation drag sensitivity
-                easing: 0.05,     // camera interpolation (0.01 = slow, 0.15 = snappy)
-                focusDist: 800    // how close the camera gets when focusing a node
+                dragSpeed: 0.5, // rotation drag sensitivity
+                easing: 0.05,   // camera interpolation (0.01 = slow, 0.15 = snappy)
+                focusDist: 800  // how close the camera gets when focusing a node
             },
             bootSequence: [
                 "> INITIALIZING...",
@@ -658,44 +629,84 @@
                 "> READY."
             ],
             startLocation: [0, 175, 0], //x,y,z
-            nav: {
-                home: "Home",
-                about: "About",
-                projects: "Projects",
-                experiments: "Experiments",
-                contact: "Contact"
-            },
-            about: {
-                title: "About",
-                text: "i make stuff",
-                skills: [
-                    { name: "HTML", progress: 90 },
-                    { name: "WebGL / 3D Graphics", progress: 75 },
-                    { name: "3d CSS", progress: 85 }
-                ]
-            },
-            projects: {
-                title: "Projects",
-                items: [
-                    { id: "01", name: "project 1", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: -200, top: 20, delay: 0 },
-                    { id: "02", name: "project 2", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: 0, top: 120, delay: -1 },
-                    { id: "03", name: "project 3", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: 200, top: 0, delay: -2 }
-                ]
-            },
-            experiments: {
-                title: "Experiments",
-                text: "lorem ipsum"
-            },
-            contact: {
-                title: "Contact Me",
-                text: "idk",
-                placeholders: { name: "Name", message: "Message..." },
-                buttonText: "send",
-                socials: [
-                    { name: "GitHub", url: "#" },
-                    { name: "Twitter", url: "#" }
-                ]
-            }
+
+            // name of home nav btn
+            homeNav: "Home",
+
+            // 3d spatial sections
+            sections: [
+                {
+                    id: "about",
+                    nav: "About",
+                    pos: [-1000, 0, 0], rot: [0, 90],
+                    panel: true, // adds glass panel styling
+                    contentHTML: `
+                        <h2>About</h2>
+                        <p>i make stuff</p>
+                        <div class="skill-group">
+                            ${[
+                            { name: "HTML", progress: 90 },
+                            { name: "WebGL / 3D Graphics", progress: 75 },
+                            { name: "3d CSS", progress: 85 }
+                        ].map(s => `
+                                <span class="skill-label">${s.name}</span>
+                                <div class="skill-bar"><div class="skill-fill" style="width: ${s.progress}%;"></div></div>
+                            `).join('')}
+                        </div>
+                    `
+                },
+                {
+                    id: "projects",
+                    nav: "Projects",
+                    pos: [0, 0, -1000], rot: [0, 0],
+                    panel: false,
+                    contentHTML: `
+                        <h2 class="hub-title">Projects</h2>
+                        ${[
+                            { id: "01", name: "project 1", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: -200, top: 20, delay: 0 },
+                            { id: "02", name: "project 2", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: 0, top: 120, delay: -1 },
+                            { id: "03", name: "project 3", desc: "lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.", left: 200, top: 0, delay: -2 }
+                        ].map(p => `
+                            <div class="proj-obj" style="left: ${p.left}px; top: ${p.top}px; animation-delay: ${p.delay}s;">
+                                <div class="icon">${p.id}</div>
+                                <div class="info"><h3>${p.name}</h3><p>${p.desc}</p></div>
+                            </div>
+                        `).join('')}
+                    `
+                },
+                {
+                    id: "experiments",
+                    nav: "Experiments",
+                    pos: [1000, 0, 0], rot: [0, -90],
+                    panel: true,
+                    style: "background: transparent; border: none; box-shadow: none;",
+                    contentHTML: `
+                        <h2>Experiments</h2>
+                        <p>lorem ipsum</p>
+                        <div class="exp-shape" style="top: 150px; left: 0; border-radius: 50%;"></div>
+                        <div class="exp-shape" style="top: 150px; left: 150px; animation-duration: 7s;"></div>
+                    `
+                },
+                {
+                    id: "contact",
+                    nav: "Contact",
+                    pos: [0, 0, 1000], rot: [0, 180],
+                    panel: true,
+                    contentHTML: `
+                        <h2>Contact Me</h2>
+                        <p>idk</p>
+                        <div style="margin-bottom: 16px; display: flex; gap: 12px;">
+                            ${[
+                            { name: "GitHub", url: "#" },
+                            { name: "Twitter", url: "#" }
+                        ].map(s => `<a href="${s.url}" style="color: var(--highlight); text-decoration: none; font-size: 0.85rem; font-family: var(--font-mono); text-transform: uppercase;">[${s.name}]</a>`).join('')}
+                        </div>
+                        <input type="text" placeholder="Name" />
+                        <textarea rows="3" placeholder="Message..."></textarea>
+                        <button>send</button>
+                    `
+                }
+            ]
         };
 
         // dom render function - do not edit
@@ -877,65 +888,37 @@
             .map((text, i) => `<div class="boot-text" style="animation-delay: ${0.2 + (i * 0.3)}s;">${text}</div>`)
             .join('');
 
-        // render nav
-        document.getElementById('render-nav').innerHTML = `
-            <button class="ui-btn" id="nav-home">${CONFIG.nav.home}</button>
-            <button class="ui-btn" id="nav-about">${CONFIG.nav.about}</button>
-            <button class="ui-btn" id="nav-proj">${CONFIG.nav.projects}</button>
-            <button class="ui-btn" id="nav-exp">${CONFIG.nav.experiments}</button>
-            <button class="ui-btn" id="nav-contact">${CONFIG.nav.contact}</button>
-        `;
-
-        document.getElementById('render-about').innerHTML = `
-            <h2>${CONFIG.about.title}</h2>
-            <p>${CONFIG.about.text}</p>
-            <div class="skill-group">
-                ${CONFIG.about.skills.map(s => `
-                    <span class="skill-label">${s.name}</span>
-                    <div class="skill-bar"><div class="skill-fill" style="width: ${s.progress}%;"></div></div>
-                `).join('')}
-            </div>
-        `;
-        document.getElementById('render-proj').innerHTML = `
-            <h2 class="hub-title">${CONFIG.projects.title}</h2>
-            ${CONFIG.projects.items.map(p => `
-                <div class="proj-obj" style="left: ${p.left}px; top: ${p.top}px; animation-delay: ${p.delay}s;">
-                    <div class="icon">${p.id}</div>
-                    <div class="info"><h3>${p.name}</h3><p>${p.desc}</p></div>
-                </div>
-            `).join('')}
-        `;
-        document.getElementById('render-exp').innerHTML = `
-            <h2>${CONFIG.experiments.title}</h2>
-            <p>${CONFIG.experiments.text}</p>
-            <div class="exp-shape" style="top: 150px; left: 0; border-radius: 50%;"></div>
-            <div class="exp-shape" style="top: 150px; left: 150px; animation-duration: 7s;"></div>
-        `;
-        document.getElementById('render-contact').innerHTML = `
-            <h2>${CONFIG.contact.title}</h2>
-            <p>${CONFIG.contact.text}</p>
-            <div style="margin-bottom: 16px; display: flex; gap: 12px;">
-                ${CONFIG.contact.socials.map(s => `<a href="${s.url}" style="color: var(--highlight); text-decoration: none; font-size: 0.85rem; font-family: var(--font-mono); text-transform: uppercase;">[${s.name}]</a>`).join('')}
-            </div>
-            <input type="text" placeholder="${CONFIG.contact.placeholders.name}" />
-            <textarea rows="3" placeholder="${CONFIG.contact.placeholders.message}"></textarea>
-            <button>${CONFIG.contact.buttonText}</button>
-        `;
-
-        const scene = document.getElementById('scene');
-        const nodes = document.querySelectorAll('.node');
-
         /* cam state/targets */
         const obj = { x: CONFIG.startLocation[0], y: CONFIG.startLocation[1], z: CONFIG.startLocation[2], rx: 0, ry: 0 };
         const tar = { x: CONFIG.startLocation[0], y: CONFIG.startLocation[1], z: CONFIG.startLocation[2], rx: 0, ry: 0 };
 
-        /* init scene nodes */
+        // dynamic section rendering
+        const sceneEl = document.getElementById('scene');
+        const navEl = document.getElementById('render-nav');
+        let navHtml = `<button class="ui-btn" id="nav-home">${CONFIG.homeNav}</button>`;
         const parsedNodes = [];
-        nodes.forEach(node => {
-            const [x, y, z] = node.dataset.pos.split(',').map(Number);
-            const [rx, ry] = node.dataset.rot.split(',').map(Number);
+
+        CONFIG.sections.forEach((sec, i) => {
+            // add nav button
+            navHtml += `<button class="ui-btn" id="nav-sec-${i}">${sec.nav}</button>`;
+
+            // create 3d node
+            const node = document.createElement('div');
+            node.className = 'node';
+
+            const [x, y, z] = sec.pos;
+            const [rx, ry] = sec.rot;
             node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateY(${ry}deg) rotateX(${rx}deg)`;
 
+            const content = document.createElement('div');
+            content.className = 'node-content' + (sec.panel ? ' panel' : '');
+            if (sec.style) content.style.cssText = sec.style;
+            content.innerHTML = sec.contentHTML;
+
+            node.appendChild(content);
+            sceneEl.appendChild(node);
+
+            // push to parsed nodes array for camera controls
             const focusFn = () => {
                 const dist = CONFIG.camera.focusDist;
                 const rX = rx * Math.PI / 180;
@@ -947,19 +930,19 @@
             };
 
             parsedNodes.push({ node, x, y, z, focusFn });
-
-            /* cam focus click */
-            node.addEventListener('click', focusFn);
+            node.addEventListener('click', focusFn); // click node to focus
         });
+
+        navEl.innerHTML = navHtml;
 
         /* bind ui nav */
         document.getElementById('nav-home').addEventListener('click', () => {
             tar.x = 0; tar.y = 0; tar.z = 0; tar.rx = 0; tar.ry = 0;
         });
-        document.getElementById('nav-about').addEventListener('click', parsedNodes[0].focusFn);
-        document.getElementById('nav-proj').addEventListener('click', parsedNodes[1].focusFn);
-        document.getElementById('nav-exp').addEventListener('click', parsedNodes[2].focusFn);
-        document.getElementById('nav-contact').addEventListener('click', parsedNodes[3].focusFn);
+
+        CONFIG.sections.forEach((sec, i) => {
+            document.getElementById(`nav-sec-${i}`).addEventListener('click', parsedNodes[i].focusFn);
+        });
 
         /* sub-object toggle */
         document.querySelectorAll('.proj-obj').forEach(p => {
