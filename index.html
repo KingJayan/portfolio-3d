@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Portfolio Hub</title>
+    <title>3D Portfolio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -409,7 +409,7 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: #000;
+            background: var(--bg-color);
             z-index: 10000;
             display: flex;
             flex-direction: column;
@@ -446,14 +446,14 @@
             <!-- about -->
             <div class="node" data-pos="-1000,0,0" data-rot="0,90">
                 <div class="node-content panel" id="render-about">
-                    <!-- Config rendered here -->
+                    <!-- config rendered -->
                 </div>
             </div>
 
             <!-- projects -->
             <div class="node" data-pos="0,0,-1000" data-rot="0,0">
                 <div class="node-content" id="render-proj">
-                    <!-- Config rendered here -->
+                    <!-- config rendered -->
                 </div>
             </div>
 
@@ -461,14 +461,14 @@
             <div class="node" data-pos="1000,0,0" data-rot="0,-90">
                 <div class="node-content panel" id="render-exp"
                     style="background: transparent; border: none; box-shadow: none;">
-                    <!-- Config rendered here -->
+                    <!-- config rendered -->
                 </div>
             </div>
 
             <!-- contact -->
             <div class="node" data-pos="0,0,1000" data-rot="0,180">
                 <div class="node-content panel" id="render-contact">
-                    <!-- Config rendered here -->
+                    <!-- config rendered -->
                 </div>
             </div>
 
@@ -477,12 +477,8 @@
 
     <div class="overlay">DRAG TO ROTATE | SCROLL TO DOLLY | CLICK TO FOCUS</div>
 
-    <div class="ui-nav">
-        <button class="ui-btn" id="nav-home">Home</button>
-        <button class="ui-btn" id="nav-about">About</button>
-        <button class="ui-btn" id="nav-proj">Projects</button>
-        <button class="ui-btn" id="nav-exp">Experiments</button>
-        <button class="ui-btn" id="nav-contact">Contact</button>
+    <div class="ui-nav" id="render-nav">
+        <!-- config rendered-->
     </div>
 
     <div class="console" id="console">
@@ -491,15 +487,34 @@
     </div>
 
     <div id="load-screen">
-        <div class="boot-text" style="animation-delay: 0.2s;">> INITIALIZING...</div>
-        <div class="boot-text" style="animation-delay: 0.5s;">> LOADING COMPONENTS...</div>
-        <div class="boot-text" style="animation-delay: 0.8s;">> RENDERING SCENE...</div>
-        <div class="boot-text" style="animation-delay: 1.2s;">> READY.</div>
+        <!-- config rendered -->
     </div>
 
     <script>
         // TEMPLATE CONFIGURATION
         const CONFIG = {
+            name: "bobby joe",
+            title: "3D Portfolio",
+            colors: {
+                background: "#0c0d0f",
+                panel: "#111215",
+                accent: "#ff4a1c",
+                text: "#818a99"
+            },
+            bootSequence: [
+                "> INITIALIZING...",
+                "> LOADING COMPONENTS...",
+                "> RENDERING SCENE...",
+                "> READY."
+            ],
+            startLocation: [0, 175, 0], //x,y,z
+            nav: {
+                home: "Home",
+                about: "About",
+                projects: "Projects",
+                experiments: "Experiments",
+                contact: "Contact"
+            },
             about: {
                 title: "About",
                 text: "i make stuff",
@@ -525,11 +540,38 @@
                 title: "Contact Me",
                 text: "idk",
                 placeholders: { name: "Name", message: "Message..." },
-                buttonText: "send"
+                buttonText: "send",
+                socials: [
+                    { name: "GitHub", url: "#" },
+                    { name: "Twitter", url: "#" }
+                ]
             }
         };
 
         // dom render function - do not edit
+        document.title = CONFIG.name + " | " + CONFIG.title;
+
+        // apply colors
+        const root = document.documentElement;
+        root.style.setProperty('--bg-color', CONFIG.colors.background);
+        root.style.setProperty('--panel-bg', CONFIG.colors.panel);
+        root.style.setProperty('--highlight', CONFIG.colors.accent);
+        root.style.setProperty('--text-color', CONFIG.colors.text);
+
+        // render boot screen
+        document.getElementById('load-screen').innerHTML = CONFIG.bootSequence
+            .map((text, i) => `<div class="boot-text" style="animation-delay: ${0.2 + (i * 0.3)}s;">${text}</div>`)
+            .join('');
+
+        // render nav
+        document.getElementById('render-nav').innerHTML = `
+            <button class="ui-btn" id="nav-home">${CONFIG.nav.home}</button>
+            <button class="ui-btn" id="nav-about">${CONFIG.nav.about}</button>
+            <button class="ui-btn" id="nav-proj">${CONFIG.nav.projects}</button>
+            <button class="ui-btn" id="nav-exp">${CONFIG.nav.experiments}</button>
+            <button class="ui-btn" id="nav-contact">${CONFIG.nav.contact}</button>
+        `;
+
         document.getElementById('render-about').innerHTML = `
             <h2>${CONFIG.about.title}</h2>
             <p>${CONFIG.about.text}</p>
@@ -558,6 +600,9 @@
         document.getElementById('render-contact').innerHTML = `
             <h2>${CONFIG.contact.title}</h2>
             <p>${CONFIG.contact.text}</p>
+            <div style="margin-bottom: 16px; display: flex; gap: 12px;">
+                ${CONFIG.contact.socials.map(s => `<a href="${s.url}" style="color: var(--highlight); text-decoration: none; font-size: 0.85rem; font-family: var(--font-mono); text-transform: uppercase;">[${s.name}]</a>`).join('')}
+            </div>
             <input type="text" placeholder="${CONFIG.contact.placeholders.name}" />
             <textarea rows="3" placeholder="${CONFIG.contact.placeholders.message}"></textarea>
             <button>${CONFIG.contact.buttonText}</button>
@@ -567,8 +612,8 @@
         const nodes = document.querySelectorAll('.node');
 
         /* cam state/targets */
-        const obj = { x: 0, y: 175, z: 0, rx: 0, ry: 0 };
-        const tar = { x: 0, y: 175, z: 0, rx: 0, ry: 0 };
+        const obj = { x: CONFIG.startLocation[0], y: CONFIG.startLocation[1], z: CONFIG.startLocation[2], rx: 0, ry: 0 };
+        const tar = { x: CONFIG.startLocation[0], y: CONFIG.startLocation[1], z: CONFIG.startLocation[2], rx: 0, ry: 0 };
 
         /* init scene nodes */
         const parsedNodes = [];
