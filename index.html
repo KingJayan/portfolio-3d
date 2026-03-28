@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Portfolio Hub</title>
     <style>
-        /* Dark-industrial neumorphism */
+        /* dark-industrial theme tokens */
         :root {
             --bg-color: #1a1b1e;
             --panel-bg: #212327;
@@ -29,7 +29,7 @@
             overflow: hidden; position: relative;
         }
 
-        /* 3D World Container */
+        /* 3d scene root */
         #scene {
             width: 100%; height: 100%;
             position: absolute; top: 50%; left: 50%;
@@ -37,14 +37,14 @@
             transform-origin: center center;
         }
 
-        /* Nodes (Rooms) */
+        /* room/object container */
         .node {
             position: absolute;
             transform-style: preserve-3d;
             border-radius: 16px;
         }
         
-        /* Inner Container for opacity/proximity fading */
+        /* content reveal layer */
         .node-content {
             opacity: 0.1;
             transform: translateZ(-30px);
@@ -58,7 +58,7 @@
             pointer-events: auto;
         }
 
-        /* Standard Neumorphic Panel */
+        /* neumorphic panels */
         .panel {
             background: var(--panel-bg);
             box-shadow: 12px 12px 24px var(--shadow-dark), -12px -12px 24px var(--shadow-light);
@@ -76,22 +76,20 @@
         h2 { margin: 0 0 16px 0; color: var(--highlight); font-weight: 500; letter-spacing: 2px; text-transform: uppercase; }
         p { margin: 0 0 16px 0; line-height: 1.6; font-size: 0.95rem; }
 
-        /* Background grid */
+        /* background detail */
         .grid {
             position: absolute; width: 4000px; height: 4000px; top: -2000px; left: -2000px;
             background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
             background-size: 100px 100px; transform: translateZ(-800px); pointer-events: none;
         }
 
-        /* --- Custom Components --- */
-        
-        /* Skills Bar */
+        /* skills visualizer */
         .skill-group { width: 100%; text-align: left; }
         .skill-label { font-size: 0.8rem; margin-bottom: 6px; display: block; }
         .skill-bar { width: 100%; height: 6px; background: #18191c; border-radius: 3px; margin-bottom: 16px; box-shadow: inset 2px 2px 5px var(--shadow-dark); }
         .skill-fill { height: 100%; background: var(--highlight); border-radius: 3px; box-shadow: 0 0 8px rgba(255,255,255,0.2); }
 
-        /* Form Elements */
+        /* industrial form inputs */
         input, textarea {
             background: #1e1f23; border: 1px solid rgba(255,255,255,0.03);
             color: var(--text-color); padding: 12px; border-radius: 8px;
@@ -107,9 +105,8 @@
         }
         button:active { box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light); }
 
-        /* Project Objects */
+        /* project sub-objects */
         .hub-title { transform: translateZ(50px); pointer-events: none; margin-bottom: 40px; }
-        
         .proj-obj {
             position: absolute;
             width: 80px; height: 80px;
@@ -133,7 +130,7 @@
         .proj-obj h3 { margin: 0 0 8px 0; color: var(--highlight); font-size: 1.1rem; }
         .proj-obj p { font-size: 0.85rem; margin: 0; }
 
-        /* Experiment Shapes */
+        /* volumetric shapes */
         .exp-shape {
             position: absolute; width: 100px; height: 100px;
             background: transparent; border: 2px solid rgba(255,255,255,0.05);
@@ -152,7 +149,7 @@
     <div id="scene">
         <div class="grid"></div>
 
-        <!-- ABOUT -->
+        <!-- about -->
         <div class="node" data-pos="-600,0,-200" data-rot="0,35">
             <div class="node-content panel">
                 <h2>About</h2>
@@ -168,13 +165,11 @@
             </div>
         </div>
 
-        <!-- PROJECTS HUB -->
+        <!-- projects -->
         <div class="node" data-pos="0,-100,-800" data-rot="0,0">
             <div class="node-content">
                 <h2 class="hub-title">Projects</h2>
                 
-                <!-- Floating Project Objects (Local Space) -->
-                <!-- P1 -->
                 <div class="proj-obj" style="left: -200px; top: 20px; animation-delay: 0s;">
                     <div class="icon">01</div>
                     <div class="info">
@@ -182,7 +177,6 @@
                         <p>Distributed real-time rendering engine framework.</p>
                     </div>
                 </div>
-                <!-- P2 -->
                 <div class="proj-obj" style="left: 0px; top: 120px; animation-delay: -1s;">
                     <div class="icon">02</div>
                     <div class="info">
@@ -190,7 +184,6 @@
                         <p>Dark-industrial CSS framework for enterprise tools.</p>
                     </div>
                 </div>
-                <!-- P3 -->
                 <div class="proj-obj" style="left: 200px; top: 0px; animation-delay: -2s;">
                     <div class="icon">03</div>
                     <div class="info">
@@ -202,18 +195,17 @@
             </div>
         </div>
 
-        <!-- EXPERIMENTS -->
+        <!-- experiments -->
         <div class="node" data-pos="700,200,-300" data-rot="-15,-40">
             <div class="node-content panel" style="background: transparent; border: none; box-shadow: none;">
                 <h2>Experiments</h2>
                 <p>Volumetric artifacts and math.</p>
-                <!-- Geometric wireframes -->
                 <div class="exp-shape" style="top: 150px; left: 0; border-radius: 50%;"></div>
                 <div class="exp-shape" style="top: 150px; left: 150px; animation-duration: 7s;"></div>
             </div>
         </div>
 
-        <!-- CONTACT -->
+        <!-- contact -->
         <div class="node" data-pos="0,500,400" data-rot="-30,180">
             <div class="node-content panel">
                 <h2>Secure Comms</h2>
@@ -233,22 +225,21 @@
     const scene = document.getElementById('scene');
     const nodes = document.querySelectorAll('.node');
 
-    // Smooth state object
+    /* cam state/targets */
     const obj = { x: 0, y: 0, z: 1200, rx: 0, ry: 0 };
     const tar = { x: 0, y: 0, z: 1200, rx: 0, ry: 0 };
 
-    // Node Init
+    /* init scene nodes */
     nodes.forEach(node => {
         const [x, y, z] = node.dataset.pos.split(',').map(Number);
         const [rx, ry] = node.dataset.rot.split(',').map(Number);
         node.style.transform = `translate(-50%, -50%) translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
         
-        // Focus Camera
+        /* cam focus click */
         node.addEventListener('click', () => {
-            const dist = 600; // Optimal viewing distance
+            const dist = 600;
             const rX = rx * Math.PI / 180;
             const rY = ry * Math.PI / 180;
-            
             tar.x = x + Math.sin(rY) * Math.cos(rX) * dist;
             tar.y = y - Math.sin(rX) * dist;
             tar.z = z + Math.cos(rY) * Math.cos(rX) * dist;
@@ -256,17 +247,16 @@
         });
     });
 
-    // Sub-Object Interactions
+    /* sub-object toggle */
     document.querySelectorAll('.proj-obj').forEach(p => {
         p.addEventListener('click', (e) => {
-            e.stopPropagation(); // Stop parent node from registering click
-            // Hide others
+            e.stopPropagation();
             document.querySelectorAll('.proj-obj').forEach(o => o !== p && o.classList.remove('active'));
             p.classList.toggle('active');
         });
     });
 
-    // Immersive Mouselook
+    /* drag rotation */
     let dragging = false;
     let sX = 0, sY = 0;
 
@@ -275,13 +265,13 @@
         if (!dragging) return;
         tar.ry -= (e.clientX - sX) * 0.15;
         tar.rx += (e.clientY - sY) * 0.15;
-        tar.rx = Math.max(-80, Math.min(80, tar.rx)); // Limit pitch
+        tar.rx = Math.max(-80, Math.min(80, tar.rx));
         sX = e.clientX; sY = e.clientY;
     });
     window.addEventListener('mouseup', () => dragging = false);
     window.addEventListener('mouseleave', () => dragging = false);
 
-    // Dolly Zoom
+    /* dolly movement */
     window.addEventListener('wheel', e => {
         const amt = e.deltaY * 1.5;
         const ryR = tar.ry * Math.PI / 180;
@@ -291,7 +281,7 @@
         tar.z += Math.cos(ryR) * Math.cos(rxR) * amt;
     }, { passive: true });
 
-    // Render Loop
+    /* render loop */
     function loop() {
         const ease = 0.05;
         obj.x += (tar.x - obj.x) * ease; obj.y += (tar.y - obj.y) * ease; obj.z += (tar.z - obj.z) * ease;
@@ -299,7 +289,7 @@
 
         scene.style.transform = `translate(-50%, -50%) rotateX(${-obj.rx}deg) rotateY(${-obj.ry}deg) translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)`;
 
-        // Proximity Activation
+        /* proximity checks */
         nodes.forEach(node => {
             const [nx, ny, nz] = node.dataset.pos.split(',').map(Number);
             const dist = Math.hypot(nx - obj.x, ny - obj.y, nz - obj.z);
