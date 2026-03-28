@@ -387,6 +387,53 @@
             pointer-events: none;
             z-index: 100;
         }
+
+        .console {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--highlight);
+            text-align: right;
+            line-height: 1.6;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.7;
+            text-transform: uppercase;
+        }
+
+        #load-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-mono);
+            color: var(--highlight);
+            transition: opacity 1s ease, visibility 1s;
+        }
+
+        .boot-text {
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: bootEntry 0.4s forwards;
+        }
+
+        @keyframes bootEntry {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 
@@ -482,6 +529,18 @@
         <button class="ui-btn" id="nav-contact">Contact</button>
     </div>
 
+    <div class="console" id="console">
+        XYZ: 0.00, 0.00, 0.00<br />
+        ROT: 0.00, 0.00<br />
+    </div>
+
+    <div id="load-screen">
+        <div class="boot-text" style="animation-delay: 0.2s;">> INITIALIZING CORE...</div>
+        <div class="boot-text" style="animation-delay: 0.5s;">> LOADING SPATIAL MAPPING...</div>
+        <div class="boot-text" style="animation-delay: 0.8s;">> ESTABLISHING LINK...</div>
+        <div class="boot-text" style="animation-delay: 1.2s;">> SYSTEM READY.</div>
+    </div>
+
     <script>
         const scene = document.getElementById('scene');
         const nodes = document.querySelectorAll('.node');
@@ -548,7 +607,10 @@
 
         /* dolly movement */
         window.addEventListener('wheel', e => {
-            const amt = e.deltaY * 1.5;
+            /* prevent zoom */
+            if (document.querySelector('.proj-obj.active')) return;
+
+            const amt = e.deltaY * 0.5;
             const ryR = tar.ry * Math.PI / 180;
             const rxR = tar.rx * Math.PI / 180;
             tar.x += Math.sin(ryR) * Math.cos(rxR) * amt;
@@ -557,12 +619,20 @@
         }, { passive: true });
 
         /* render loop */
+        const consoleEl = document.getElementById('console');
+
         function loop() {
             const ease = 0.05;
             obj.x += (tar.x - obj.x) * ease; obj.y += (tar.y - obj.y) * ease; obj.z += (tar.z - obj.z) * ease;
             obj.rx += (tar.rx - obj.rx) * ease; obj.ry += (tar.ry - obj.ry) * ease;
 
             scene.style.transform = `rotateX(${-obj.rx}deg) rotateY(${-obj.ry}deg) translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)`;
+
+            /* update console */
+            consoleEl.innerHTML = `
+                XYZ: ${obj.x.toFixed(2)}, ${obj.y.toFixed(2)}, ${obj.z.toFixed(2)}<br/>
+                ROT: ${obj.rx.toFixed(2)}, ${obj.ry.toFixed(2)}<br/>
+            `;
 
             /* proximity checks */
             parsedNodes.forEach(({ node, x, y, z }) => {
@@ -576,6 +646,16 @@
 
             requestAnimationFrame(loop);
         }
+
+        /* hide boot screen */
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const boot = document.getElementById('load-screen');
+                boot.style.opacity = '0';
+                setTimeout(() => boot.style.visibility = 'hidden', 1000);
+            }, 2000);
+        });
+
         loop();
     </script>
 
