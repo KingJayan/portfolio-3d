@@ -878,6 +878,7 @@
         bgEffect.init();
 
         function bgLoop() {
+            if (bgEffect === BG_EFFECTS.none) return; // skip loop if no effect
             bgEffect.tick();
             requestAnimationFrame(bgLoop);
         }
@@ -985,9 +986,22 @@
         const consoleEl = document.getElementById('console');
 
         function loop() {
+            requestAnimationFrame(loop);
+
+            const dx = tar.x - obj.x;
+            const dy = tar.y - obj.y;
+            const dz = tar.z - obj.z;
+            const drx = tar.rx - obj.rx;
+            const dry = tar.ry - obj.ry;
+
+            // skip DOM recalculation if already at target
+            if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01 && Math.abs(dz) < 0.01 && Math.abs(drx) < 0.01 && Math.abs(dry) < 0.01) {
+                return;
+            }
+
             const ease = CONFIG.camera.easing;
-            obj.x += (tar.x - obj.x) * ease; obj.y += (tar.y - obj.y) * ease; obj.z += (tar.z - obj.z) * ease;
-            obj.rx += (tar.rx - obj.rx) * ease; obj.ry += (tar.ry - obj.ry) * ease;
+            obj.x += dx * ease; obj.y += dy * ease; obj.z += dz * ease;
+            obj.rx += drx * ease; obj.ry += dry * ease;
 
             scene.style.transform = `rotateX(${-obj.rx}deg) rotateY(${-obj.ry}deg) translate3d(${-obj.x}px, ${-obj.y}px, ${-obj.z}px)`;
 
@@ -998,16 +1012,17 @@
             `;
 
             /* proximity checks */
+            const objX = obj.x, objY = obj.y, objZ = obj.z;
             parsedNodes.forEach(({ node, x, y, z }) => {
-                const dist = Math.hypot(x - obj.x, y - obj.y, z - obj.z);
-                if (dist < 1000) {
+                const pdx = x - objX, pdy = y - objY, pdz = z - objZ;
+                const distSq = pdx * pdx + pdy * pdy + pdz * pdz;
+
+                if (distSq < 1000000) { // 1000 * 1000
                     if (!node.classList.contains('near')) node.classList.add('near');
                 } else {
                     if (node.classList.contains('near')) node.classList.remove('near');
                 }
             });
-
-            requestAnimationFrame(loop);
         }
 
         /* hide boot screen */

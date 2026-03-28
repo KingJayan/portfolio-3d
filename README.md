@@ -31,11 +31,25 @@ a single-file, immersive 3d portfolio experience. config-driven, minimalistic, g
 | `bg` | background effect (`none`, `particles`, `scanlines`, `nebula`) |
 | `camera` | scroll speed, drag speed, easing, and focus distance |
 | `bootSequence` | lines shown on the loading screen |
-| `nav` | nav bar button labels |
-| `about` | bio text and skill bars |
-| `projects` | project cards (name, desc, pose) |
-| `experiments` | experiments section text |
-| `contact` | contact form labels, button text, and social links |
+| `homeNav` | the text for the "return to center" nav button |
+| `sections` | an array of objects defining your 3d nodes (see below) |
+
+### adding new sections
+the portfolio is entirely dynamic. to add a new section, simply add a new object to the `CONFIG.sections` array. the engine will automatically generate the 3d node, wire up the camera focus logic, and add a button to the nav bar.
+
+```javascript
+{
+    id: "gallery",
+    nav: "My Art",             // nav bar label
+    pos: [1000, 1000, 0],      // [x, y, z] coordinates in 3d space
+    rot: [0, -45],             // [x, y] tilt rotation
+    panel: true,               // applies the glassmorphism panel styling
+    contentHTML: `
+        <h2>gallery</h2>
+        <p>this is a new section</p>
+    `
+}
+```
 
 ### file structure
 everything lives in `index.html`. the file is split into three sections:
