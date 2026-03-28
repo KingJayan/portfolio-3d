@@ -6,7 +6,7 @@ a single-file, immersive 3d portfolio experience. config-driven, minimalistic, g
 ![midnight theme, particles background on about section](screenshots/midn-particles-about.png)
 
 ### features
-- **config-driven**: edit your bio, projects, and skills from a single json-like config block—no html/css hunting required.
+- **config-driven**: edit your bio, projects, and skills from a single json-like config block, no html/css hunting required.
 - **6-dof spatial camera**: smooth tracking and zoom logic.
 - **proximity rendering**: nodes dynamically render and intercept clicks based on camera distance to save memory.
 - **performant**: built specifically for performance. avoids heavy filters on massive elements to prevent compositing crashes on mac/webkit.
@@ -55,7 +55,7 @@ the portfolio is entirely dynamic. to add a new section, simply add a new object
 everything lives in `index.html`. the file is split into three sections:
 
 - **`<style>`**: theme tokens (`:root` css variables), component styles, animations
-- **`<body>`**: minimal html shell. contains `#viewport` → `#scene` (the 3d world), fixed ui overlays (nav, load screen), and background effect layers
+- **`<body>`**: minimal html shell. contains `#viewport` -> `#scene` (the 3d world), fixed ui overlays (nav, load screen), and background effect layers
 - **`<script>`**: split into two parts:
   + **`THEMES` / `CONFIG`** (top, editable): all user-facing content and settings. change this to customize your portfolio
   + **render + engine** (bottom, do not edit): parses `CONFIG`, renders html from it, drives the camera, background effects, and proximity detection loop
