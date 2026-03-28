@@ -607,7 +607,7 @@
 
         /* dolly movement */
         window.addEventListener('wheel', e => {
-            /* prevent zoom */
+            e.preventDefault();
             if (document.querySelector('.proj-obj.active')) return;
 
             const amt = e.deltaY * 0.5;
@@ -616,7 +616,7 @@
             tar.x += Math.sin(ryR) * Math.cos(rxR) * amt;
             tar.y -= Math.sin(rxR) * amt;
             tar.z += Math.cos(ryR) * Math.cos(rxR) * amt;
-        }, { passive: true });
+        }, { passive: false });
 
         /* render loop */
         const consoleEl = document.getElementById('console');
