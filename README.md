@@ -1,8 +1,8 @@
 <div align="center">
   <h2><code>KingJayan/portfolio-3d</code></h2>
+  <p>a single-file, immersive 3d portfolio experience, made without threejs. config-driven, glassmorphism aesthetic with a focus on spatial interaction</p>
 </div>
 
-a single-file, immersive 3d portfolio experience, made without threejs. config-driven, glassmorphism aesthetic with a focus on spatial interaction.
 
 ![midnight theme, particles background on about section](screenshots/midn-particles-about.png)
 
