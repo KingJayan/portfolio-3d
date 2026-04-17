@@ -1,5 +1,5 @@
 <div align="center">
-  <h2><code>kingjayan/portfolio-3d</code></h2>
+  <h2><code>KingJayan/portfolio-3d</code></h2>
 </div>
 
 a single-file, immersive 3d portfolio experience, made without threejs. config-driven, glassmorphism aesthetic with a focus on spatial interaction.
@@ -7,7 +7,7 @@ a single-file, immersive 3d portfolio experience, made without threejs. config-d
 ![midnight theme, particles background on about section](screenshots/midn-particles-about.png)
 
 ### features
-- **config-driven**: edit your bio, projects, and skills from a single json-like config block, no html/css hunting required
+- **config-driven**: edit your bio, projects, and skills from a single config block
 - **6-dof spatial camera**: smooth tracking and zoom logic
 - **proximity rendering**: nodes dynamically render and intercept clicks based on camera distance to save memory
 - **performant**: built specifically for performance. avoids heavy filters on massive elements to prevent compositing crashes on mac/webkit
@@ -62,7 +62,7 @@ everything lives in `index.html`. the file is split into three sections:
   + **render + engine** (bottom, do not edit): parses `CONFIG`, renders html from it, drives the camera, background effects, and proximity detection loop
 
 ### constraints
-- **single-file**: no external assets. google fonts are used, but can be removed, and images are for docs only
+- **single-file**: no external assets or threejs. google fonts are used, but can be removed, and images are for docs only
 - **vanilla-only**: zero dependencies. pure html, css transforms, and js
 
 ### limitations
